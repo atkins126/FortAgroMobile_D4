@@ -58,17 +58,7 @@ uses UPrincipal, UDataContext, UDataFunctions, UDataSync;
 
 procedure TfrmLocalEstoque.btnFecharClick(Sender: TObject);
 begin
-if vIdLocalEstoque.Length=0 then
- begin
-   ShowMessage('Selecione um Local!');
-   Exit;
- end
- else
- begin
-  dmDB.vIdLocalEstoqueSel := vIdLocalEstoque;
-  dmDB.vNomeLocalEstoque  := vNomeLocalEstoque;
   Close;
- end;
 end;
 
 procedure TfrmLocalEstoque.btnSelecionarClick(Sender: TObject);

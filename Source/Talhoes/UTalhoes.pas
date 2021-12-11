@@ -61,7 +61,7 @@ implementation
 
 {$R *.fmx}
 
-uses UDataContext, Umsg, UOperacoes, UPrincipal;
+uses UDataContext, Umsg,UPrincipal;
 
 procedure TfrmTalhoes.FormKeyUp(Sender: TObject; var Key: Word;
   var KeyChar: Char; Shift: TShiftState);

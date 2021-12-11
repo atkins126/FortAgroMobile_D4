@@ -622,7 +622,7 @@ begin
              txt.Text := 'Produto: ';
 
              txt      := TListItemText(Objects.FindDrawable('Text5'));
-             txt.Text := dmDb.TDetReceituarioproduto_1.AsString;
+             txt.Text := dmDb.TDetReceituarioProdutoNome.AsString;
 
              txt      := TListItemText(Objects.FindDrawable('Text6'));
              txt.Text := 'Area Prev.: ';

@@ -15,14 +15,14 @@ uses
   FMX.EditBox, FMX.NumberBox, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, Data.DB,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.Gestures;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.Gestures, FMX.Memo.Types;
 
 type
   TfrmOperacao = class(TForm)
     TabPrincipal: TTabControl;
     TabLista: TTabItem;
     TbiNovaOperacao: TTabItem;
-    tbiMaquinas: TTabItem;
+    Z: TTabItem;
     tbiProdutos: TTabItem;
     layPrincipal: TLayout;
     ToolBar1: TToolBar;
@@ -282,7 +282,6 @@ type
     Rectangle43: TRectangle;
     RecTipoOperacaoFinalidade: TRectangle;
     Layout55: TLayout;
-    cbxTipoOperacaoPulverizacao: TComboBox;
     cbxFinalidadePulverizacao: TComboBox;
     RecCulturaCoberturaQualidade: TRectangle;
     Layout59: TLayout;
@@ -341,33 +340,6 @@ type
     lblAreaReal: TLabel;
     Layout70: TLayout;
     lblAreaTotalReal: TLabel;
-    tbiReceituario: TTabItem;
-    ToolBar8: TToolBar;
-    Rectangle5: TRectangle;
-    lblNomeReceituario: TLabel;
-    Image27: TImage;
-    Layout71: TLayout;
-    Button12: TButton;
-    Image30: TImage;
-    Layout72: TLayout;
-    Rectangle51: TRectangle;
-    Layout73: TLayout;
-    Layout74: TLayout;
-    Label66: TLabel;
-    lblTalhaoRec: TLabel;
-    Layout75: TLayout;
-    Label68: TLabel;
-    lblAtividadeRec: TLabel;
-    Layout76: TLayout;
-    Label70: TLabel;
-    lblDataInicioRec: TLabel;
-    Label72: TLabel;
-    lblDataFimRec: TLabel;
-    Layout81: TLayout;
-    Label77: TLabel;
-    lblAreaPrevRec: TLabel;
-    Label79: TLabel;
-    lblAreaRealRec: TLabel;
     BindSourceDB7: TBindSourceDB;
     lblTotalHoras: TLabel;
     BindSourceDB5: TBindSourceDB;
@@ -397,19 +369,12 @@ type
     Image31: TImage;
     Layout58: TLayout;
     Layout80: TLayout;
-    Label51: TLabel;
     lblFinalidade: TLabel;
     btnEditaProduto: TButton;
     Image32: TImage;
     ListaMaquinas: TListView;
     ListaProdutos: TListView;
     ListaOcorrencia: TListView;
-    layReceiruario: TLayout;
-    lblReceituario: TLabel;
-    edtReceituario: TEdit;
-    EditButton6: TEditButton;
-    Rectangle50: TRectangle;
-    ListaDetReceiturario: TListView;
     btnVazao: TLayout;
     Image35: TImage;
     Label64: TLabel;
@@ -491,9 +456,6 @@ type
     cbxCulturaApl: TComboBox;
     Rectangle63: TRectangle;
     Label84: TLabel;
-    Layout45: TLayout;
-    lblIdREC: TLabel;
-    Label85: TLabel;
     lblCapRomaneio: TLabel;
     edtRomaneio: TEdit;
     Layout99: TLayout;
@@ -538,6 +500,11 @@ type
     Layout106: TLayout;
     Label92: TLabel;
     edtObsExtra: TEdit;
+    layReceiruario: TLayout;
+    Rectangle50: TRectangle;
+    lblReceituario: TLabel;
+    edtReceituario: TEdit;
+    EditButton6: TEditButton;
     procedure btnVoltaOpClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure EditButton1Click(Sender: TObject);
@@ -741,7 +708,6 @@ begin
  lblTalhao.Text          := dmDB.RetornaTalhoesPul(dmDB.qryOpSafraid.AsString);
  lblAreaPrev.Text        := dmDB.qryOpSafraareaprevista.AsString;
  lblAreaReal.Text        := dmDB.qryOpSafraarearealizada.AsString;
- lblTalhaoRec.Text       := dmDB.RetornaTalhoesPul(dmDB.qryOpSafraid.AsString);
  lblAreaPrevRec.Text     := dmDB.qryOpSafraareaprevista.AsString;
  lblAreaRealRec.Text     := dmDB.qryOpSafraarearealizada.AsString;
  lblIdREC.Text           := dmDB.qryOpSafraidreceituario.AsString;
@@ -1228,223 +1194,96 @@ begin
  vDetalhes:=0;
  laybtnLista.Visible := false;
  CarregaCombo;
- if vIdOp.Length=0 then
- begin
-   myShowMenssagem('Selecione a Operação!');
-   Exit;
- end;
  if vStatusConfere='2' then
  begin
    myShowMenssagem('Operação ja Finalizada!');
    Exit;
  end;
-
  dmDB.AbreDetTalhoesPulverizacao(vIdOp);
  if dmDB.TDetTalhoesPul.RecordCount=0 then
  begin
    myShowMenssagem('Nenhum talhão adicionado, adicione antes de finalizar!');
    Exit;
  end;
-
  if dmDB.VerificaMaquinasOperacao(vIdOP) then
  begin
    myShowMenssagem('Informe as maquinas utilizadas antes de finalizar!');
    Exit;
  end;
-
- if (vIdOPTipo<>'3') and (vIdOPTipo<>'4') and (vIdOPTipo<>'5') and (vIdOPTipo<>'6') then
+ if dmDB.VerificaProdutosOperacao(vIdOP) then
  begin
-   if dmDB.VerificaProdutosOperacao(vIdOP) then
-   begin
-     myShowMenssagem('Informe os Produtos utilizadas antes de finalizar!');
-     Exit;
-   end;
-   if not dmDB.VerificaProdutosOperacaoZero(vIdOP) then
-   begin
-     myShowMenssagem('Produtos com quantidade zero edite antes de finalizar!');
-     Exit;
-   end;
+  myShowMenssagem('Informe os Produtos utilizadas antes de finalizar!');
+  Exit;
  end;
-
+ if not dmDB.VerificaProdutosOperacaoZero(vIdOP) then
+ begin
+  myShowMenssagem('Produtos com quantidade zero edite antes de finalizar!');
+  Exit;
+ end;
  if not dmDB.VerificaMaquinaHorasEmAberto(vIdOP) then
  begin
    myShowMenssagem('Existe Maquinas sem horas Trabalhadas edite antes de finalizar!');
    Exit;
  end;
- if (vIdOPTipo<>'5') then
- begin
-   MessageDlg('Deseja Realmente Finalizar essa Operação?', System.UITypes.TMsgDlgType.mtInformation,
-    [System.UITypes.TMsgDlgBtn.mbYes,
-    System.UITypes.TMsgDlgBtn.mbNo
-    ], 0,
-   procedure(const AResult: System.UITypes.TModalResult)
+ MessageDlg('Deseja Realmente Finalizar essa Operação?', System.UITypes.TMsgDlgType.mtInformation,
+  [System.UITypes.TMsgDlgBtn.mbYes,
+  System.UITypes.TMsgDlgBtn.mbNo
+  ], 0,
+  procedure(const AResult: System.UITypes.TModalResult)
+  begin
+   case AResult of
+   mrYES:
     begin
-     case AResult of
-     mrYES:
-      begin
-        vFinalizandoOP       :=1;
-        dmDB.TOperacaoSafra.Close;
-        dmDB.TOperacaoSafra.Open;
-        dmDB.TOperacaoSafra.Filtered:= false;
-        dmDB.TOperacaoSafra.Filter  := 'ID='+vIdOP;
-        dmDB.TOperacaoSafra.Filtered:= true;
-        dmDB.TOperacaoSafra.Edit;
-        vTipoOperacao := dmDB.TOperacaoSafraidoperacao.AsInteger;
-        if dmDB.TOperacaoSafraidoperacao.AsInteger=1 then
-        begin
-          recVariedade.Visible                       := false;
-          dmDb.TTipoAplicacaoSolido.Close;
-          dmDb.TTipoAplicacaoSolido.Open;
-          recSelectAtividade.Visible  := false;
-          TabAuxCadAtividade.TabPosition := TTabPosition.None;
-          TabAuxCadAtividade.ActiveTab   := tbiApliSolidos;
-          edtAtividade.Enabled        := false;
-          edtAtividade.Text           := dmDB.TOperacaoSafraoperacao.AsString;
-          edtDataIniAtividade.date    := dmDB.TOperacaoSafradatainicio.AsDateTime;
-          edtDataFimAtividade.Text    := dmDB.TOperacaoSafradatafim.AsString;
-          edtAreaPrev.Text            := dmDB.TOperacaoSafraareaprevista.AsString;
-          edtAreaReal.Text            := dmDB.TOperacaoSafraarearealizada.AsString;
-          edtObservacaoAtividade.Text := dmDB.TOperacaoSafraobservacao.AsString;
-          vIdAtividade                := dmDB.TOperacaoSafraidoperacao.AsString;
-          vIdTalhao                   := dmDB.TOperacaoSafraidtalhao.AsString;
-          edtTalhao.Text              := dmDB.TOperacaoSafratalhao.AsString;
-          cbxTipoOperacaoSolid.ItemIndex   := cbxTipoOperacaoSolid.Items.IndexOf(dmDB.TOperacaoSafratipoterraaereo.AsString);
-          vIdTipoAplicacaoSolido           := dmDB.TOperacaoSafraidtipoaplicacaosolido.AsString;
-          cbxTipoAplicacaoSolido.ItemIndex := cbxTipoAplicacaoSolido.Items.IndexOf(dmDB.TOperacaoSafratipoaplicacaosolido.AsString);
-          cbxCulturaapl.ItemIndex           := cbxCulturaPulverizacao.Items.IndexOf(dmDB.TOperacaoSafraCultura.AsString);
-          vIdCultura                        := dmDB.TOperacaoSafraidcultura.AsString;
-          mudarAba(TbiNovaOperacao,sender);
-        end;
-        if dmDB.TOperacaoSafraidoperacao.AsInteger=2 then
-        begin
-          cbxTipoOperacaoPulverizacao.Items.Clear;
-          cbxTipoOperacaoPulverizacao.Items.Add('Terrestre');
-          cbxTipoOperacaoPulverizacao.Items.Add('Aéreo');
-          recSelectAtividade.Visible := false;
-          TabAuxCadAtividade.TabPosition := TTabPosition.None;
-          TabAuxCadAtividade.ActiveTab   := tbiPulverizacao;
-          dmdb.TCulturas.Close;
-          dmdb.TCulturas.Open;
-          LayDetAtividade.Visible := true;
-          vIdAtividade                               := dmDB.TOperacaoSafraidoperacao.AsString;
-          vIdSafra                                   := dmDB.TOperacaoSafraidsafra.AsString;
-          dmDB.vIdUser                               := dmDB.TOperacaoSafraidResponsavel.AsString;
-          edtDataInicioPul.Date                      := dmDB.TOperacaoSafradatainicio.AsDateTime;
-          edtAreaPrev.Text                           := dmDB.TOperacaoSafraareaPrevista.Asstring;
-          if dmDB.TOperacaoSafradatafim.AsString.Length=0 then
-           edtDataFimPul.Text                  := ''
-          else
-           edtDataFimPul.Date                   := dmDB.TOperacaoSafradatafim.AsDateTime;
-          edtObservacaoAtividade.Text                := dmDB.TOperacaoSafraobservacao.AsString;
-          cbxTipoOperacaoPulverizacao.ItemIndex      := cbxTipoOperacaoPulverizacao.Items.IndexOf(dmDB.TOperacaoSafratipoterraaereo.AsString);
-          vIndexFinalidade                           := cbxFinalidadePulverizacao.Items.IndexOf(dmDB.TOperacaoSafrafinalidade.AsString);
-          vIdCultura                                 := dmDB.TOperacaoSafraidcultura.AsString;
-          cbxCulturaPulverizacao.ItemIndex           := cbxCulturaPulverizacao.Items.IndexOf(dmDB.TOperacaoSafraCultura.AsString);
-          cbxQualidadeCobertura.Visible              := false;
-          lblQualiCobertura.Visible                  := false;
-          recVariedade.Visible                       := false;
-          lblFinalidade.Visible                      := true;
-          cbxFinalidadePulverizacao.Visible          := true;
-          lblReceituario.Visible                     := true;
-          edtReceituario.Visible                     := true;
+      vFinalizandoOP       :=1;
+      dmDB.TOperacaoSafra.Close;
+      dmDB.TOperacaoSafra.Open;
+      dmDB.TOperacaoSafra.Filtered:= false;
+      dmDB.TOperacaoSafra.Filter  := 'ID='+vIdOP;
+      dmDB.TOperacaoSafra.Filtered:= true;
+      dmDB.TOperacaoSafra.Edit;
+      vTipoOperacao := dmDB.TOperacaoSafraidoperacao.AsInteger;
+      cbxTipoOperacaoPulverizacao.Items.Clear;
+      cbxTipoOperacaoPulverizacao.Items.Add('Terrestre');
+      cbxTipoOperacaoPulverizacao.Items.Add('Aéreo');
+      recSelectAtividade.Visible := false;
+      TabAuxCadAtividade.TabPosition := TTabPosition.None;
+      TabAuxCadAtividade.ActiveTab   := tbiPulverizacao;
+      dmdb.TCulturas.Close;
+      dmdb.TCulturas.Open;
+      LayDetAtividade.Visible := true;
+      vIdAtividade                               := dmDB.TOperacaoSafraidoperacao.AsString;
+      vIdSafra                                   := dmDB.TOperacaoSafraidsafra.AsString;
+      dmDB.vIdUser                               := dmDB.TOperacaoSafraidResponsavel.AsString;
+      edtDataInicioPul.Date                      := dmDB.TOperacaoSafradatainicio.AsDateTime;
+      edtAreaPrev.Text                           := dmDB.TOperacaoSafraareaPrevista.Asstring;
+      if dmDB.TOperacaoSafradatafim.AsString.Length=0 then
+       edtDataFimPul.Text                  := ''
+      else
+       edtDataFimPul.Date                   := dmDB.TOperacaoSafradatafim.AsDateTime;
+      edtObservacaoAtividade.Text                := dmDB.TOperacaoSafraobservacao.AsString;
+      cbxTipoOperacaoPulverizacao.ItemIndex      := cbxTipoOperacaoPulverizacao.Items.IndexOf(dmDB.TOperacaoSafratipoterraaereo.AsString);
+      vIndexFinalidade                           := cbxFinalidadePulverizacao.Items.IndexOf(dmDB.TOperacaoSafrafinalidade.AsString);
+      vIdCultura                                 := dmDB.TOperacaoSafraidcultura.AsString;
+      cbxCulturaPulverizacao.ItemIndex           := cbxCulturaPulverizacao.Items.IndexOf(dmDB.TOperacaoSafraCultura.AsString);
+      cbxQualidadeCobertura.Visible              := false;
+      lblQualiCobertura.Visible                  := false;
+      recVariedade.Visible                       := false;
+      lblFinalidade.Visible                      := true;
+      cbxFinalidadePulverizacao.Visible          := true;
+      lblReceituario.Visible                     := true;
+      edtReceituario.Visible                     := true;
 
-          lblCobertura.Visible                       := false;
-          cbxCobertura.Visible                       := false;
+      lblCobertura.Visible                       := false;
+      cbxCobertura.Visible                       := false;
 
 
-          cbxFinalidadePulverizacao.ItemIndex        := vIndexFinalidade;
-          vIdreceituario                             := dmDB.TOperacaoSafraidreceituario.AsString;
-          edtReceituario.text                        := dmDB.TOperacaoSafrareceituario.asstring;
-
-          mudarAba(TbiNovaOperacao,sender);
-       end;
-       if (dmDB.TOperacaoSafraidoperacao.AsInteger=3)or
-        (dmDB.TOperacaoSafraidoperacao.AsInteger=6) then
-        begin
-          cbxTipoOperacaoPulverizacao.Items.Clear;
-          cbxTipoOperacaoPulverizacao.Items.Add(dmDB.TOperacaoSafratipoterraaereo.AsString);
-          cbxTipoOperacaoPulverizacao.ItemIndex:=0;
-          recSelectAtividade.Visible := false;
-          TabAuxCadAtividade.TabPosition := TTabPosition.None;
-          TabAuxCadAtividade.ActiveTab   := tbiPulverizacao;
-          dmdb.TCulturas.Close;
-          dmdb.TCulturas.Open;
-          dmdb.TAuxCobertura.Close;
-          dmdb.TAuxCobertura.Open;
-          lblFinalidade.Visible                      := false;
-          cbxFinalidadePulverizacao.Visible          := false;
-          lblReceituario.Visible                     := false;
-          edtReceituario.Visible                     := false;
-          lblCobertura.Visible                       := true;
-          cbxCobertura.Visible                       := true;
-          cbxQualidadeCobertura.Visible              := true;
-          lblQualiCobertura.Visible                  := true;
-          cbxCobertura.ItemIndex                     := cbxCobertura.Items.IndexOf(dmDB.TOperacaoSafraCobertura.AsString);
-          cbxVariedade.ItemIndex                     := cbxVariedade.Items.IndexOf(dmDB.TOperacaoSafraVariedade.AsString);
-          vIdCobertura                               := dmDB.TOperacaoSafraidCobertura.AsString;
-          cbxQualidadeCobertura.ItemIndex            := cbxQualidadeCobertura.Items.IndexOf(dmDB.TOperacaoSafraQualidadeCobertura.AsString);
-          LayDetAtividade.Visible := true;
-          vIdAtividade                               := dmDB.TOperacaoSafraidoperacao.AsString;
-          vIdSafra                                   := dmDB.TOperacaoSafraidsafra.AsString;
-          dmDB.vIdUser                               := dmDB.TOperacaoSafraidResponsavel.AsString;
-          edtDataInicioPul.Date                      := dmDB.TOperacaoSafradatainicio.AsDateTime;
-          edtAreaPrev.Text                           := dmDB.TOperacaoSafraareaPrevista.Asstring;
-          if dmDB.TOperacaoSafradatafim.AsString.Length=0 then
-           edtDataFimPul.Text                  := ''
-          else
-           edtDataFimPul.Date                        := dmDB.TOperacaoSafradatafim.AsDateTime;
-          edtObservacaoAtividade.Text                := dmDB.TOperacaoSafraobservacao.AsString;
-          vIdCultura                                 := dmDB.TOperacaoSafraidcultura.AsString;
-          cbxCulturaPulverizacao.ItemIndex           := cbxCulturaPulverizacao.Items.IndexOf(dmDB.TOperacaoSafraCultura.AsString);
-          vidVariedade                               := dmDB.TOperacaoSafraidvariedade.AsString;
-          mudarAba(TbiNovaOperacao,sender);
-       end;
-       if dmDB.TOperacaoSafraidoperacao.AsInteger=4 then
-        begin
-          cbxQualidadeCobertura.Visible        := false;
-          layReceiruario.Visible               := false;
-          RecTipoOperacaoFinalidade.Visible    := false;
-          RecCulturaCoberturaQualidade.Visible := true;
-          lblCobertura.Visible                 := false;
-          lblQualiCobertura.Visible            := false;
-          cbxCobertura.Visible                 := false;
-          lblCobertura.Visible                 := false;
-          cbxCulturaPulverizacao.Visible       := true;
-          lblCultura.Visible                   := true;
-
-          recVariedade.Visible                 := true;
-          RecObs.Visible                       := true;
-          recDatas.Visible                     := true;
-          TabAuxCadAtividade.TabPosition       := TTabPosition.None;
-          TabAuxCadAtividade.ActiveTab         := tbiPulverizacao;
-          LayDetAtividade.Visible              := true;
-          recSelectAtividade.Visible           := false;
-          cbxVariedade.ItemIndex               := cbxVariedade.Items.IndexOf(dmDB.TOperacaoSafraVariedade.AsString);
-          vIdAtividade                         := dmDB.TOperacaoSafraidoperacao.AsString;
-          vIdCultura                           := dmDB.TOperacaoSafraidcultura.AsString;
-          cbxCulturaPulverizacao.ItemIndex     := cbxCulturaPulverizacao.Items.IndexOf(dmDB.TOperacaoSafraCultura.AsString);
-          vIdSafra                             := dmDB.TOperacaoSafraidsafra.AsString;
-          dmDB.vIdUser                         := dmDB.TOperacaoSafraidResponsavel.AsString;
-          edtDataInicioPul.Date                := dmDB.TOperacaoSafradatainicio.AsDateTime;
-          edtAreaPrev.Text                     := dmDB.TOperacaoSafraareaPrevista.Asstring;
-          if dmDB.TOperacaoSafradatafim.AsString.Length=0 then
-           edtDataFimPul.Text                  := ''
-          else
-           edtDataFimPul.Date                  := dmDB.TOperacaoSafradatafim.AsDateTime;
-          edtObservacaoAtividade.Text          := dmDB.TOperacaoSafraobservacao.AsString;
-          vidVariedade                         := dmDB.TOperacaoSafraidvariedade.AsString;
-          mudarAba(TbiNovaOperacao,sender);
-       end;
-      end;
-     end;
-   end);
- end
- else
- begin
-  FinalizaOperacaoExtra;
-  myShowMenssagem('Operacao finalizada com sucesso!');
-  GeraLista('');
- end;
+      cbxFinalidadePulverizacao.ItemIndex        := vIndexFinalidade;
+      vIdreceituario                             := dmDB.TOperacaoSafraidreceituario.AsString;
+      edtReceituario.text                        := dmDB.TOperacaoSafrareceituario.asstring;
+      mudarAba(TbiNovaOperacao,sender);
+    end;
+   end;
+  end);
 end;
 
 procedure TfrmOperacao.btnHabilitaSyncClick(Sender: TObject);
@@ -1764,7 +1603,6 @@ end;
 
 procedure TfrmOperacao.btnVoltaOpClick(Sender: TObject);
 begin
-
  recSelectAtividade.Visible := true;
  MudarAba(TabLista,sender);
 end;
@@ -2459,7 +2297,6 @@ begin
         lblfinalidade.visible   := true;
         cbxFinalidadePulverizacao.Visible := true;
         recVariedade.Visible := false;
-//        recSelectAtividade.Visible := false;
         TabAuxCadAtividade.TabPosition := TTabPosition.None;
         TabAuxCadAtividade.ActiveTab   := tbiPulverizacao;
         BindSourceDB6.DataSet := nil;

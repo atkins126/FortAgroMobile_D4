@@ -183,8 +183,7 @@ end;
 
 procedure TfrmMaquinas.FormShow(Sender: TObject);
 begin
- frmMaquinas.StyleBook := frmPrincipal.StyleBook1;
- if dmDB.vPulverizacao=1 then
+ if dmDB.vOpPull=1 then
  begin
   edtPrefixoF.Enabled := false;
   dmDB.AbreMaquinas(' AND PREFIXO LIKE '+QuotedStr('%'+'PV'+'%'));
@@ -192,6 +191,8 @@ begin
  end
  else
  begin
+  dmDB.AbreMaquinas('');
+  GeraListaMaquinas;
   edtPrefixoF.Enabled := true;
  end;
 end;

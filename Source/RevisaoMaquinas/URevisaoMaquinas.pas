@@ -328,18 +328,14 @@ end;
 
 procedure TfrmRevisaoMaquina.btnBuscaItemClick(Sender: TObject);
 begin
-  frmItensRevisao := TfrmItensRevisao.Create(Self);
-  try
-    frmItensRevisao.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      edtItemRevisao.Text := dmDB.vNomeItemRevSelect;
-      vIdItem             := dmDB.vIdItemRevSelect;
-      vRevisaoIdItem    := dmDB.vIdItemRevSelect;
-    end);
-  finally
-    frmItensRevisao.free;
-  end;
+  if Not Assigned(frmItensRevisao) then
+   Application.CreateForm(TfrmItensRevisao,frmItensRevisao);
+  frmItensRevisao.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    edtItemRevisao.Text := dmDB.vNomeItemRevSelect;
+    vIdItem             := dmDB.vIdItemRevSelect;
+    vRevisaoIdItem      := dmDB.vIdItemRevSelect;
+  end);
 end;
 
 procedure TfrmRevisaoMaquina.btnCancelaClick(Sender: TObject);
@@ -685,51 +681,44 @@ procedure TfrmRevisaoMaquina.EditButton1Click(Sender: TObject);
 var
  vIdPlanos:string;
 begin
-  vIdPlanos := dmRevisao.RetornaPlanoRevisaoMaquinas(vidMaquina);
-  frmPlanoRevisao := TfrmPlanoRevisao.Create(Self);
-  try
-    frmPlanoRevisao.vFiltro:=' where id in('+vIdPlanos+')';
-    frmPlanoRevisao.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      vIdPlanoRev               := DMRevisao.vIdPlanoSelect;
-      edtPlanoRevisao.Text      :=  DMRevisao.vNomePlanoSelect;
-    end);
-  finally
-    frmPlanoRevisao.free;
+  if edtMaquina.Text.Length=0 then
+  begin
+    ShowMessage('Selecione a Maquina primeiro');
+    Exit;
   end;
+  vIdPlanos := dmRevisao.RetornaPlanoRevisaoMaquinas(vidMaquina);
+  if Not Assigned(frmPlanoRevisao) then
+   Application.CreateForm(TfrmPlanoRevisao,frmPlanoRevisao);
+  frmPlanoRevisao.vFiltro:=' where id in('+vIdPlanos+')';
+  frmPlanoRevisao.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    vIdPlanoRev               := DMRevisao.vIdPlanoSelect;
+    edtPlanoRevisao.Text      :=  DMRevisao.vNomePlanoSelect;
+  end);
 end;
 
 procedure TfrmRevisaoMaquina.EditButton3Click(Sender: TObject);
 begin
-  frmProdutos := TfrmProdutos.Create(Self);
-  try
-    frmProdutos.vTipo :='3';
-    frmProdutos.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-     edtProdutoUtilizado.Text := dmDB.vNomeProduto;
-     vIdProduto               := DMdb.vIdProduto;
-     lblCodFab.Text           := 'Cod. Fabri.:'+dmDB.vCodFabricanteProduto;
-    end);
-  finally
-    frmProdutos.Free;
-  end;
+  if Not Assigned(frmProdutos) then
+   Application.CreateForm(TfrmProdutos,frmProdutos);
+  frmProdutos.vTipo :='3';
+  frmProdutos.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    edtProdutoUtilizado.Text := dmDB.vNomeProduto;
+    vIdProduto               := DMdb.vIdProduto;
+    lblCodFab.Text           := 'Cod. Fabri.:'+dmDB.vCodFabricanteProduto;
+  end);
 end;
 
 procedure TfrmRevisaoMaquina.EditButton5Click(Sender: TObject);
 begin
-  frmMaquinas := TfrmMaquinas.Create(Self);
-  try
-    frmMaquinas.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      vIdMaquina         := dmDB.vIdMaquinaSel;
-      edtMaquina.Text    := dmDB.vMarcaModelo;
-    end);
-  finally
-    frmMaquinas.free;
-  end;
+  if Not Assigned(frmMaquinas) then
+   Application.CreateForm(TfrmMaquinas,frmMaquinas);
+  frmMaquinas.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    vIdMaquina         := dmDB.vIdMaquinaSel;
+    edtMaquina.Text    := dmDB.vMarcaModelo;
+  end);
 end;
 
 procedure TfrmRevisaoMaquina.edtDataInicioClosePicker(Sender: TObject);

@@ -425,7 +425,7 @@ type
     vImgCapture: integer;
     vIdMaquina,vIdoperador,vIdLocalEstoque,vFiltro,vFlagSync,
     vIdAbastecimento,vIdProduto,vIdItemOutros,vILocalOrigem,vIdLocalDestino,
-    vIdTransferencia,vIdAtividade:string;
+    vIdTransferencia,vIdAtividade,vCodigo:string;
     function BitmapFromBase64(const base64: string): TBitmap;
     function Base64FromBitmap(Bitmap: TBitmap): string;
   end;
@@ -439,7 +439,7 @@ implementation
 
 uses UPrincipal, Maquinas, UOperadorMaquina, UDataContext, ULocalEstoque,
   UProdutos, UDataFunctions, UAtividadeAbastecimento, UnitCamera,
-  UCamAbastecimento;
+  UCamAbastecimento, UQrCod;
 
 function TfrmAbastecimento.Base64FromBitmap(Bitmap: TBitmap): string;
 var
@@ -691,59 +691,56 @@ end;
 
 procedure TfrmAbastecimento.btnImgClick(Sender: TObject);
 begin
- frmCameraAbastecimento := TfrmCameraAbastecimento.Create(Self);
-  try
-    frmCameraAbastecimento.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-    end);
-  finally
-    frmCameraAbastecimento.free;
-  end;
-// frmCameraAbastecimento.Show;
-// MudarAba(tbiImg,sender);
-end;
-
-{$IFDEF ANDROID}
-procedure TfrmAbastecimento.btnLerQrClick(Sender: TObject);
-var
- vCodigo :string;
-begin
-  FrmCamera:= TFrmCamera.Create(nil);
-  FrmCamera.ShowModal(procedure(ModalResult: TModalResult)
+ if Not Assigned(frmCameraAbastecimento) then
+   Application.CreateForm(TfrmCameraAbastecimento, frmCameraAbastecimento);
+   frmCameraAbastecimento.imgHorimetro.Bitmap  := nil;
+   frmCameraAbastecimento.imgBomba.Bitmap      := nil;
+  frmCameraAbastecimento.ShowModal(procedure(ModalResult: TModalResult)
   begin
-    if ModalResult = 0 then
-    begin
-     vCodigo         := FrmCamera.codigo;
-     vIdMaquina      := dmFunctions.RetornaNomeMaquina(vCodigo);
-     if (vIdMaquina.Length=0) then
-     begin
-       ShowMessage('Maquina Não Encontrado');
-       edtMaquina.Text        :='';
-       btnListaRevisao.Visible := false;
-       layHorimetro.Height     := 65;
-       Exit;
-     end
-     else
-     begin
-      edtMaquina.Text          := vCodigo;
-      EdtUltimoHorimetro.Text  := dmDB.RetornaHorimetroAtual(vidMaquina);
-      edtProximaRev.Text       := dmDB.RetornaHorimetroProximaRev(vIdMaquina);
-      if edtProximaRev.Text.Length >0 then
-      begin
-        btnListaRevisao.Visible := true;
-        layHorimetro.Height     := 95;
-      end
-      else
-      begin
-        btnListaRevisao.Visible := false;
-        layHorimetro.Height     := 65;
-      end
-     end;
-    end
   end);
 end;
-{$ENDIF}
+
+procedure TfrmAbastecimento.btnLerQrClick(Sender: TObject);
+var
+ Verifica:string;
+begin
+ if Not Assigned(FrmQrCode) then
+   Application.CreateForm(TFrmQrCode, FrmQrCode);
+  FrmQrCode.CodeReader1.Start;
+  dmDB.vOpPull :=1;
+  FrmQrCode.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+   vIdMaquina      := dmFunctions.RetornaNomeMaquina(vcodigo);
+   if (vIdMaquina.Length=0) then
+   begin
+     ShowMessage('Maquina Não Encontrado');
+     edtMaquina.TexT         :='';
+     btnListaRevisao.Visible := false;
+     layHorimetro.Height     := 65;
+     Exit;
+   end
+   else
+   begin
+    Verifica := dmDB.VerificaRevisaoVencida(vIdMaquina);
+    if Verifica<>'OK' then
+     ShowMessage(Verifica);
+
+    edtMaquina.Text          := vcodigo;
+    EdtUltimoHorimetro.Text  := dmDB.RetornaHorimetroAtual(vidMaquina);
+    edtProximaRev.Text       := dmDB.RetornaHorimetroProximaRev(vIdMaquina);
+    if edtProximaRev.Text.Length >0 then
+    begin
+      btnListaRevisao.Visible := true;
+      layHorimetro.Height     := 95;
+    end
+    else
+    begin
+      btnListaRevisao.Visible := false;
+      layHorimetro.Height     := 65;
+    end
+   end;
+  end);
+end;
 
 procedure TfrmAbastecimento.btnNovaTransferenciaClick(Sender: TObject);
 begin
@@ -1058,7 +1055,7 @@ procedure TfrmAbastecimento.btnVoltarProdutoMouseUp(Sender: TObject;
 begin
    btnVoltarProduto.Opacity :=1;
 end;
-
+{$IFDEF ANDROID}
 procedure TfrmAbastecimento.DisplayMessageCamera(Sender: TObject;
   const APermissions: TArray<string>; const APostProc: TProc);
 begin
@@ -1078,6 +1075,7 @@ begin
     APostProc;
   end);
 end;
+{$ENDIF}
 
 procedure TfrmAbastecimento.btnListaRevisaoClick(Sender: TObject);
 begin
@@ -1111,7 +1109,7 @@ procedure TfrmAbastecimento.Rectangle31Click(Sender: TObject);
 begin
  MudarAba(tbiCad,sender);
 end;
-
+{$IFDEF ANDROID}
 procedure TfrmAbastecimento.TakePicturePermissionRequestResult(Sender: TObject;
   const APermissions: TArray<string>;
   const AGrantResults: TArray<TPermissionStatus>);
@@ -1124,6 +1122,7 @@ begin
   else
     TDialogService.ShowMessage('Você não tem permissão para tirar fotos');
 end;
+{$ENDIF}
 
 procedure TfrmAbastecimento.tbPrincipalChange(Sender: TObject);
 begin
@@ -1136,119 +1135,107 @@ end;
 
 procedure TfrmAbastecimento.EditButton1Click(Sender: TObject);
 begin
-  frmLocalEstoque := TfrmLocalEstoque.Create(Self);
-  try
-    frmLocalEstoque.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      edtLocalEstoque.Text   := dmDB.vNomeLocalEstoque;
-      vIdLocalEstoque        := dmDB.vIdLocalEstoqueSel;
-    end);
-  finally
-    frmOperadorMaquina.free;
-  end;
+  if Not Assigned(frmLocalEstoque) then
+   Application.CreateForm(TfrmLocalEstoque, frmLocalEstoque);
+  frmLocalEstoque.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    edtLocalEstoque.Text   := dmDB.vNomeLocalEstoque;
+    vIdLocalEstoque        := dmDB.vIdLocalEstoqueSel;
+  end);
 end;
 
 procedure TfrmAbastecimento.EditButton2Click(Sender: TObject);
 begin
-  frmOperadorMaquina := TfrmOperadorMaquina.Create(Self);
-  try
-    frmOperadorMaquina.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      edtOperador.Text   := dmDB.vNomeOperador;
-      vIdoperador        := dmDB.vIdOperador;
-    end);
-  finally
-    frmOperadorMaquina.free;
-  end;
+  if Not Assigned(frmOperadorMaquina) then
+   Application.CreateForm(TfrmOperadorMaquina, frmOperadorMaquina);
+  frmOperadorMaquina.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    edtOperador.Text   := dmDB.vNomeOperador;
+    vIdoperador        := dmDB.vIdOperador;
+  end);
 end;
 
 procedure TfrmAbastecimento.EditButton3Click(Sender: TObject);
 begin
-  frmprodutos := Tfrmprodutos.Create(Self);
-  try
-    frmProdutos.vTipo :='3';
-    frmprodutos.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      edtOutroProduto.Text   := dmdb.vNomeProduto;
-      vIdProduto             := dmdb.vIdProduto;
-    end);
-  finally
-    frmprodutos.free;
-  end;
+  if Not Assigned(frmprodutos) then
+   Application.CreateForm(Tfrmprodutos, frmprodutos);
+  frmProdutos.vTipo :='3';
+  frmprodutos.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    edtOutroProduto.Text   := dmdb.vNomeProduto;
+    vIdProduto             := dmdb.vIdProduto;
+  end);
 end;
 
 procedure TfrmAbastecimento.EditButton4Click(Sender: TObject);
 begin
- frmLocalEstoque := TfrmLocalEstoque.Create(Self);
-  try
-    frmLocalEstoque.ShowModal(
-    procedure(ModalResult: TModalResult)
+ if Not Assigned(frmLocalEstoque) then
+   Application.CreateForm(TfrmLocalEstoque, frmLocalEstoque);
+  frmLocalEstoque.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    if ModalResult = 0 then
     begin
       edtLocalOrigem.Text   := dmDB.vNomeLocalEstoque;
       vILocalOrigem         := dmDB.vIdLocalEstoqueSel;
-    end);
-  finally
-    frmLocalEstoque.free;
-  end;
+    end;
+  end);
 end;
 
 procedure TfrmAbastecimento.EditButton5Click(Sender: TObject);
 begin
- frmLocalEstoque := TfrmLocalEstoque.Create(Self);
-  try
-    frmLocalEstoque.ShowModal(
-    procedure(ModalResult: TModalResult)
+ if Not Assigned(frmLocalEstoque) then
+   Application.CreateForm(TfrmLocalEstoque, frmLocalEstoque);
+  frmLocalEstoque.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    if ModalResult = 0 then
     begin
       edtLocalDestino.Text   := dmDB.vNomeLocalEstoque;
       vIdLocalDestino        := dmDB.vIdLocalEstoqueSel;
-    end);
-  finally
-    frmLocalEstoque.free;
-  end;
+    end;
+  end);
 end;
 
 procedure TfrmAbastecimento.EditButton6Click(Sender: TObject);
 begin
-  frmAtividadeAbastecimento := TfrmAtividadeAbastecimento.Create(Self);
-  try
-    frmAtividadeAbastecimento.ShowModal(
-    procedure(ModalResult: TModalResult)
+  if Not Assigned(frmAtividadeAbastecimento) then
+   Application.CreateForm(TfrmAtividadeAbastecimento, frmAtividadeAbastecimento);
+  frmAtividadeAbastecimento.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+     if ModalResult = 0 then
     begin
       edtAtividade.Text   := dmDB.vNomeAtividade;
       vIdAtividade        := dmDB.vIdAtividade;
-    end);
-  finally
-    frmAtividadeAbastecimento.free;
-  end;
+    end;
+  end);
 end;
 
 procedure TfrmAbastecimento.btnBuscarMaquinaClick(Sender: TObject);
+var
+ Verifica:string;
 begin
-  frmMaquinas := TfrmMaquinas.Create(Self);
-  try
-    dmDB.vPulverizacao:=0;
-    frmMaquinas.ShowModal(
-    procedure(ModalResult: TModalResult)
+  if Not Assigned(frmMaquinas) then
+   Application.CreateForm(TfrmMaquinas, frmMaquinas);
+  frmMaquinas.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    if ModalResult = 0 then
     begin
-      if dmDB.vMarcaModelo.Length>0 then
+     if dmDB.vMarcaModelo.Length>0 then
       begin
        edtMaquina.Text          := dmDB.vMarcaModelo;
        vIdMaquina               := dmDB.vIdMaquinaSel;
        EdtUltimoHorimetro.Text  := dmDB.vUltimoHorimetro;
        edtProximaRev.Text       := dmDB.RetornaHorimetroProximaRev(dmDB.vIdMaquinaSel);
-      if edtProximaRev.Text.Length >0 then
-      begin
+       Verifica := dmDB.VerificaRevisaoVencida(vIdMaquina);
+       if Verifica<>'OK' then
+        ShowMessage(Verifica);
+       if edtProximaRev.Text.Length >0 then
+       begin
         btnListaRevisao.Visible := true;
         layHorimetro.Height     := 95;
+       end;
       end;
-     end;
-    end);
-  finally
-    frmMaquinas.free;
-  end;
+    end;
+  end);
 end;
 
 procedure TfrmAbastecimento.edtLocalOrigemEnter(Sender: TObject);
@@ -1465,6 +1452,28 @@ begin
                img := TListItemImage(Objects.FindDrawable('Image10'));
                img.Bitmap := frmPrincipal.imgMaquina.Bitmap;
 
+               if dmDB.TListaRevisaoStatusStr.AsString='VENCIDA' then
+               begin
+                 txt      := TListItemText(Objects.FindDrawable('Text12'));
+                 txt.Text := 'Status:';
+                 txt      := TListItemText(Objects.FindDrawable('Text13'));
+                 txt.TextColor := TAlphaColorRec.White;
+                 txt.Text := dmDB.TListaRevisaoStatusStr.AsString;
+
+                 img := TListItemImage(Objects.FindDrawable('Image11'));
+                 img.Bitmap := frmPrincipal.imgVermelho.Bitmap;
+               end;
+               if dmDB.TListaRevisaoStatusStr.AsString='A VENCER' then
+               begin
+                 txt      := TListItemText(Objects.FindDrawable('Text12'));
+                 txt.Text := 'Status:';
+                 txt      := TListItemText(Objects.FindDrawable('Text13'));
+                 txt.TextColor := TAlphaColorRec.White;
+                 txt.Text := dmDB.TListaRevisaoStatusStr.AsString;
+
+                 img := TListItemImage(Objects.FindDrawable('Image11'));
+                 img.Bitmap := frmPrincipal.imgVerde.Bitmap;
+               end;
              end;
              dmDB.TListaRevisao.Next;
            end;
@@ -1581,7 +1590,7 @@ begin
    end;
  end;
 end;
-
+{$IFDEF ANDROID}
 procedure TfrmAbastecimento.LibraryPermissionRequestResult(Sender: TObject;
   const APermissions: TArray<string>;
   const AGrantResults: TArray<TPermissionStatus>);
@@ -1594,6 +1603,7 @@ begin
                 TDialogService.ShowMessage('Você não tem permissão para acessar as fotos');
 
 end;
+{$ENDIF}
 
 procedure TfrmAbastecimento.LimpaCampos;
 begin
@@ -1638,15 +1648,23 @@ begin
     begin
      btnExcluiProduto.Visible  := false;
      dmDB.AbreFotos(vIdAbastecimento);
-     frmCameraAbastecimento    := TfrmCameraAbastecimento.Create(Self);
-      try
-        frmCameraAbastecimento.ShowModal(
-        procedure(ModalResult: TModalResult)
-        begin
-        end);
-      finally
-        frmCameraAbastecimento.free;
-      end;
+     if Not Assigned(frmCameraAbastecimento) then
+       Application.CreateForm(TfrmCameraAbastecimento, frmCameraAbastecimento);
+      if dmDB.vImg64Horimetro.Length>0 then
+       frmCameraAbastecimento.imgHorimetro.Bitmap  := BitmapFromBase64(dmDB.vImg64Horimetro)
+      else
+       frmCameraAbastecimento.imgHorimetro.Bitmap  := nil;
+      if dmDB.vImg64Bomba.Length>0 then
+       frmCameraAbastecimento.imgBomba.Bitmap  := BitmapFromBase64(dmDB.vImg64Bomba)
+      else
+       frmCameraAbastecimento.imgBomba.Bitmap  := nil;
+      frmCameraAbastecimento.btnFotoBomba.Enabled     := false;
+      frmCameraAbastecimento.btnFotoHorimetro.Enabled := false;
+      frmCameraAbastecimento.ShowModal(procedure(ModalResult: TModalResult)
+      begin
+        frmCameraAbastecimento.btnFotoBomba.Enabled     := true;
+        frmCameraAbastecimento.btnFotoHorimetro.Enabled := true;
+      end);
      Exit;
     end;
   end;

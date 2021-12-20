@@ -4,7 +4,9 @@ object dmDB: TdmDB
   Width = 851
   object FDConn: TFDConnection
     Params.Strings = (
-      'Database=E:\Projetos2021\Fortaleza\FortAgroMobile_D4\db\Fort.db'
+      
+        'Database=D:\Projetos2021\FortAgroMobile\FortAgroMobile_D4\db\For' +
+        't.db'
       'LockingMode=Normal'
       'DriverID=SQLite')
     ResourceOptions.AssignedValues = [rvSilentMode]
@@ -2011,6 +2013,10 @@ object dmDB: TdmDB
     object TOperadorMaquinacelular: TStringField
       FieldName = 'celular'
       Origin = 'celular'
+    end
+    object TOperadorMaquinapulverizacao: TIntegerField
+      FieldName = 'pulverizacao'
+      Origin = 'pulverizacao'
     end
   end
   object TStandPlantas: TFDQuery
@@ -4026,14 +4032,11 @@ object dmDB: TdmDB
     SQL.Strings = (
       'select '
       ' a.*,'
-      ' b.nome,'
       ' case'
-      '   when m.horimetro>a.horimetroproxima then '#39'VENCIDA'#39
-      '   when m.horimetro<a.horimetroproxima then '#39'A VENCER'#39
+      '   when horimetromaquina>a.horimetroproxima then '#39'VENCIDA'#39
+      '   when horimetromaquina<a.horimetroproxima then '#39'A VENCER'#39
       ' end StatusStr      '
       'from revisaomaquinahist a'
-      'left join planorevisao b on a.idplanorevisao=b.id'
-      'join maquinaveiculo m on m.id=a.idmaquina'
       'where a.idmaquina=89   '
       'and a.horimetroproxima')
     Left = 440
@@ -4080,13 +4083,16 @@ object dmDB: TdmDB
       FieldName = 'idplanorevisao'
       Origin = 'idplanorevisao'
     end
-    object TListaRevisaonome: TStringField
-      AutoGenerateValue = arDefault
-      FieldName = 'nome'
-      Origin = 'nome'
-      ProviderFlags = []
-      ReadOnly = True
+    object TListaRevisaoplanonome: TStringField
+      FieldName = 'planonome'
+      Origin = 'planonome'
       Size = 100
+    end
+    object TListaRevisaohorimetromaquina: TBCDField
+      FieldName = 'horimetromaquina'
+      Origin = 'horimetromaquina'
+      Precision = 15
+      Size = 2
     end
     object TListaRevisaoStatusStr: TWideStringField
       AutoGenerateValue = arDefault
@@ -4383,6 +4389,7 @@ object dmDB: TdmDB
       FieldName = 'id'
       Origin = 'id'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object Desembarquesstatus: TWideStringField
       FieldName = 'status'
@@ -4516,6 +4523,7 @@ object dmDB: TdmDB
       FieldName = 'id'
       Origin = 'id'
       ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
     end
     object DesembarqueGridstatus: TWideStringField
       FieldName = 'status'

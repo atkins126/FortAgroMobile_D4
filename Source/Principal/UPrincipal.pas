@@ -1217,6 +1217,7 @@ begin
     dmdb.qryConfigSalvarLogin.AsInteger :=1;
     dmdb.qryConfig.ApplyUpdates(-1);
   end;
+  dmUpdate.CreateTablesVersao('');
   MostraMenu;
   laymnu.Opacity :=0;
   MudarAba(tbiMenu,sender);
@@ -1389,12 +1390,7 @@ begin
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
-var
-    AppEvent : IFMXApplicationEventService;
 begin
-  if TPlatformServices.Current.SupportsPlatformService(IFMXApplicationEventService, IInterface(AppEvent)) then
-      AppEvent.SetApplicationEventHandler(AppEventProc);
-
   if dmSync= nil then
    dmSync := TdmSync.Create(Self);
 
@@ -1405,19 +1401,12 @@ begin
   tbPrincipal.TabPosition       := TTabPosition.None;
   tbPrincipal.ActiveTab         := tbiLogin;
   edtUsuario.SetFocus;
-  Animation.Start;
   layMnuPrincipal.Opacity       :=0;
   lblVersao.Text                := GetVersaoArq;
   lblVersao2.Text               := GetVersaoArq;
 
   dmDB.qryConfig.Close;
   dmDB.qryConfig.Open;
-//  if dmDB.qryConfigTipoDB.Asstring.Length=0 then
-//  begin
-//   dmSync.GetTipoDB;
-//   dmDB.qryConfig.Close;
-//   dmDB.qryConfig.Open;
-//  end;
   lblTipoDB.Text := dmDB.qryConfigTipoDB.Asstring;
   vTipoDb        := dmDB.qryConfigTipoDB.Asstring;
 
@@ -1432,6 +1421,7 @@ begin
   else
     chkSalvaSenha.IsChecked := false;
   tbPrincipal.TabPosition   := TTabPosition.None;
+
   if dmDB.VerificaTabelaVazia('usuario') then
    begin
      vPrimeiroAcesso        := true;
@@ -1452,7 +1442,7 @@ end;
 
 function TfrmPrincipal.GetVersaoArq: string;
 begin
-  Result := 'v2021-12-01';
+  Result := 'v2021-12-05';
 end;
 
 procedure TfrmPrincipal.Image16Click(Sender: TObject);

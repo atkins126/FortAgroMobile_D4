@@ -1216,7 +1216,6 @@ begin
             on E: Exception do
               Raise exception.Create(E.Message);
             end;
-
           end;
        end;
        result:='Detalhe Receituario Baixadas com Sucesso!'
@@ -1553,7 +1552,7 @@ begin
               Clear;
               Add(vID);
               try
-                  ExecSQL;
+                ExecSQL;
               except
                 on E: Exception do
                  Raise exception.Create(E.Message);
@@ -1612,7 +1611,12 @@ begin
             'TRevisaoItens','',[rfReplaceAll]);
            TRevisaoItens.FieldByName(vField).AsString := vJoGetJ.GetValue(vField).value;
           end;
-          TRevisaoItens.ApplyUpdates(-1);
+          try
+            TRevisaoItens.ApplyUpdates(-1);
+          except
+          on E: Exception do
+            Raise exception.Create(E.Message);
+          end;
        end;
        result:='Items Revisao Baixados com Sucesso!'
     end
@@ -3632,7 +3636,10 @@ procedure TdmSync.TSyncReceituarioReconcileError(DataSet: TFDDataSet;
   E: EFDException; UpdateKind: TFDDatSRowState;
   var Action: TFDDAptReconcileAction);
 begin
+  TThread.Synchronize(nil, procedure
+ begin
   frmPrincipal.myShowMenssagem(e.Message);
+ end);
 end;
 
 function TdmSync.VerificaReceituarioExiste(id: string): Boolean;
@@ -4160,11 +4167,12 @@ begin
             dmDB.TOperadorMaquina.Open;
             dmDB.TOperadorMaquina.Insert;
           end;
-          dmDB.TOperadorMaquinaId.AsString          := vId;
-          dmDB.TOperadorMaquinanome.AsString        := vJoGetJ.GetValue('NOME').value;
-          dmDB.TOperadorMaquinarg.AsString          := vJoGetJ.GetValue('RG').value;
-          dmDB.TOperadorMaquinacpf.AsString         := vJoGetJ.GetValue('CPF').value;
-          dmDB.TOperadorMaquinaSTATUS.AsString      := vJoGetJ.GetValue('STATUS').value;
+          dmDB.TOperadorMaquinaId.AsString            := vId;
+          dmDB.TOperadorMaquinanome.AsString          := vJoGetJ.GetValue('NOME').value;
+          dmDB.TOperadorMaquinarg.AsString            := vJoGetJ.GetValue('RG').value;
+          dmDB.TOperadorMaquinacpf.AsString           := vJoGetJ.GetValue('CPF').value;
+          dmDB.TOperadorMaquinaSTATUS.AsString        := vJoGetJ.GetValue('STATUS').value;
+          dmDB.TOperadorMaquinapulverizacao.AsString  := vJoGetJ.GetValue('PULVERIZACAO').value;
           try
            dmDB.TOperadorMaquina.ApplyUpdates(-1);
           except
@@ -4186,3 +4194,4 @@ end;
 
 
 end.
+

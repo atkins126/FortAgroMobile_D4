@@ -4,3 +4,6 @@ Visible=False
 [dmDB.TDetTalhoesPul]
 Visible=False
 
+[dmDB.TOperacoes]
+Visible=False
+

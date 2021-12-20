@@ -35,7 +35,6 @@ uses
   UTalhoes in '..\Talhoes\UTalhoes.pas' {frmTalhoes},
   UTipoOcorrencia in '..\TipoOcorrencia\UTipoOcorrencia.pas' {frmTipoOcorrencia},
   u99Permissions in '..\Util\u99Permissions.pas',
-  UCamAbastecimento in '..\Camera\UCamAbastecimento.pas' {frmCameraAbastecimento},
   UPulverizacao in '..\Pulverzacao\UPulverizacao.pas' {frmPulverizacao},
   UQrCod in '..\NewCamera\UQrCod.pas' {FrmQrCode},
   UPlantio in '..\Plantio\UPlantio.pas' {frmPlantio},
@@ -55,12 +54,5 @@ begin
   Application.CreateForm(TdmUpdate, dmUpdate);
   Application.CreateForm(TdmRevisao, dmRevisao);
   Application.CreateForm(TfrmMsg, frmMsg);
-  Application.CreateForm(TfrmPulverizacao, frmPulverizacao);
-  Application.CreateForm(TFrmQrCode, FrmQrCode);
-  Application.CreateForm(TfrmPlantio, frmPlantio);
-  Application.CreateForm(TfrmColheita, frmColheita);
-  Application.CreateForm(TfrmAplicacaoSolido, frmAplicacaoSolido);
-  Application.CreateForm(TfrmOperacao, frmOperacao);
-  Application.CreateForm(TfrmDesembarque, frmDesembarque);
   Application.Run;
 end.

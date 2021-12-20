@@ -173,6 +173,8 @@ type
     Label17: TLabel;
     Image5: TImage;
     GestureManager1: TGestureManager;
+    btnBuscar: TSpeedButton;
+    Image7: TImage;
     procedure btnVoltar1Click(Sender: TObject);
     procedure btnNovoClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -207,6 +209,7 @@ type
     procedure Rectangle13Click(Sender: TObject);
     procedure btnExcluiRevClick(Sender: TObject);
     procedure btnExluiItemClick(Sender: TObject);
+    procedure btnBuscarClick(Sender: TObject);
   private
     var
      vItemInsert:integer;
@@ -336,6 +339,11 @@ begin
     vIdItem             := dmDB.vIdItemRevSelect;
     vRevisaoIdItem      := dmDB.vIdItemRevSelect;
   end);
+end;
+
+procedure TfrmRevisaoMaquina.btnBuscarClick(Sender: TObject);
+begin
+ Filtro;
 end;
 
 procedure TfrmRevisaoMaquina.btnCancelaClick(Sender: TObject);
@@ -667,7 +675,7 @@ procedure TfrmRevisaoMaquina.cbxTipoChange(Sender: TObject);
 begin
  layPlanoRevisao.Enabled := cbxTipo.ItemIndex=0;
  layMaquina.Enabled      := cbxTipo.ItemIndex>-1;
- layStatus.Enabled       := cbxTipo.ItemIndex>-1;
+ layStatus.Enabled       := true;
  layData.Enabled         := cbxTipo.ItemIndex>-1;
 end;
 
@@ -730,7 +738,6 @@ end;
 procedure TfrmRevisaoMaquina.edtNomeFiltroChangeTracking(Sender: TObject);
 begin
  btnExcluiRev.Visible := false;
- Filtro;
 end;
 
 procedure TfrmRevisaoMaquina.Filtro;
@@ -755,9 +762,9 @@ begin
   btnExluiItem.Visible     := false;
   layPlanoRevisao.Enabled  := false;
   layMaquina.Enabled       := false;
-  layStatus.Enabled        := false;
+  layStatus.Enabled        := true;
   layData.Enabled          := false;
-  GeraLista('');
+  Filtro;
 end;
 
 procedure TfrmRevisaoMaquina.GeraLista(vFiltro: string);
@@ -1108,6 +1115,7 @@ begin
      edtDataIni.Date     := StrToDate(vDataIni);
      edtDataFim.Date     := StrToDate(vDataFim);
      dmRevisao.AbreRevisaoAplInsertEdit(vIdRevisao);
+     cbxStatus.Enabled   := true;
      if dmRevisao.TRevisaoMaquinaApl.RecordCount>0 then
      begin
       dmRevisao.TRevisaoMaquinaApl.Edit;

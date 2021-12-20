@@ -155,7 +155,7 @@ end;
 
 procedure TfrmProdutos.FormShow(Sender: TObject);
 begin
- frmProdutos.StyleBook := frmPrincipal.StyleBook1;
+ edtNomeFiltro.Text :='';
 end;
 
 procedure TfrmProdutos.GeraLista;

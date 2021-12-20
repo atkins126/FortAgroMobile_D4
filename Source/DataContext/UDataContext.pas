@@ -768,16 +768,6 @@ type
     TDetReceituariodatarecomendacao: TDateField;
     TDetReceituariodataprevaplicacao: TDateField;
     TDetReceituarioProdutonome: TStringField;
-    TListaRevisaoid: TIntegerField;
-    TListaRevisaoidmaquina: TWideStringField;
-    TListaRevisaoobservacao: TStringField;
-    TListaRevisaodatainicio: TDateField;
-    TListaRevisaodatafim: TDateField;
-    TListaRevisaohorimetro: TBCDField;
-    TListaRevisaohorimetroproxima: TBCDField;
-    TListaRevisaoidplanorevisao: TIntegerField;
-    TListaRevisaonome: TStringField;
-    TListaRevisaoStatusStr: TWideStringField;
     TOperacaoSafrareplante: TIntegerField;
     Desembarques: TFDQuery;
     DesembarqueGrid: TFDQuery;
@@ -828,6 +818,18 @@ type
     DesembarqueGridsyncfaz: TWideStringField;
     DesembarqueGridvalornf: TBCDField;
     DesembarqueGridTalhao: TStringField;
+    TListaRevisaoid: TIntegerField;
+    TListaRevisaoidmaquina: TWideStringField;
+    TListaRevisaoobservacao: TStringField;
+    TListaRevisaodatainicio: TDateField;
+    TListaRevisaodatafim: TDateField;
+    TListaRevisaohorimetro: TBCDField;
+    TListaRevisaohorimetroproxima: TBCDField;
+    TListaRevisaoidplanorevisao: TIntegerField;
+    TListaRevisaoplanonome: TStringField;
+    TListaRevisaohorimetromaquina: TBCDField;
+    TListaRevisaoStatusStr: TWideStringField;
+    TOperadorMaquinapulverizacao: TIntegerField;
     procedure FDConnBeforeConnect(Sender: TObject);
     procedure TUsuarioReconcileError(DataSet: TFDDataSet; E: EFDException;
       UpdateKind: TFDDatSRowState; var Action: TFDDAptReconcileAction);
@@ -871,7 +873,6 @@ type
     { Private declarations }
   public
     //SELECAO EM FORMULARIO
-    vImg64Horimetro,vImg64Bomba,
     vIdTalhao,vNomeTalhao,vAreaTalhao,vIdProduto,vNomeProduto,
     vIdOperador,vNomeOperador,vIdMaquinaSel,vMarcaModelo,vIdTipoOcorrencia,
     vNomeTipoOocrrencia,vIdReceituario,vNomeReceituario,vStatusRec,
@@ -879,7 +880,7 @@ type
     vIdPraga,vNomePraga,vIdAtividade,vNomeAtividade,
     vIdContrato,vNumeroContrato,vComprador,vUltimoHorimetro,
     vIdRevSelect,vNomeItemRevSelect,vIdItem,vIdRevisaoIdItem,vIdItemRevSelect,
-    vCodFabricanteProduto:string;
+    vCodFabricanteProduto,vDataRecomendacao:string;
     //
     vIdUser,vIdSegmento,vAgronomo:string;
 
@@ -1203,8 +1204,6 @@ end;
 
 procedure TdmDB.ReadAccess;
 begin
-  qryConfig.Close;
-  qryConfig.Open;
   qryControAcces.Close;
   qryControAcces.Open;
   if not qryControAcces.IsEmpty then
@@ -1271,8 +1270,7 @@ begin
  begin
    Clear;
    Add('select a.horimetroproxima from revisaomaquinahist a');
-   Add('join maquinaveiculo b on a.idmaquina=b.id');
-   Add('where idMaquina='+idMaquina+' and a.horimetroproxima>b.horimetro');
+   Add('where idMaquina='+idMaquina+' and a.horimetroproxima>horimetromaquina');
    Add('order by a.horimetroproxima');
    Add('limit 1');
    Open;
@@ -1700,8 +1698,8 @@ begin
    Add('select * from abastecimento a');
    Add('where id='+vID);
    Open;
-   vImg64Horimetro := QryFotosimg.AsString;
-   vImg64Bomba     := QryFotosimg2.AsString;
+//   vImg64Horimetro := QryFotosimg.AsString;
+//   vImg64Bomba     := QryFotosimg2.AsString;
  end;
 end;
 
@@ -1810,7 +1808,7 @@ begin
     Add('left join receiturario rc on rc.id=o.idreceituario');
     Add('left join Auxcobertura co on co.id=o.idCobertura');
     Add('join operacoes op on op.id=o.idoperacao');
-    Add('where idOperacao=5 and o.Status in(1,2)');
+    Add('where o.Status in(1,2)');
     Add(Filtro);
     Add('order by o.datareg desc');
     Open;
@@ -2527,14 +2525,11 @@ begin
    Clear;
    Add('select');
    Add(' a.*,');
-   Add(' b.nome,');
    Add(' case');
-   Add('   when m.horimetro>a.horimetroproxima then ''VENCIDA''');
-   Add('   when m.horimetro<a.horimetroproxima then ''A VENCER''');
+   Add('   when horimetromaquina>a.horimetroproxima then ''VENCIDA''');
+   Add('   when horimetromaquina<a.horimetroproxima then ''A VENCER''');
    Add(' end StatusStr');
    Add('from revisaomaquinahist a');
-   Add('left join planorevisao b on a.idplanorevisao=b.id');
-   Add('join maquinaveiculo m on m.id=a.idmaquina');
    Add('where a.idmaquina='+vIdMaquina);
    Open;
  end;
@@ -2754,7 +2749,7 @@ begin
  begin
    Clear;
    Add('select * from detoperacaosafratalhaoprodutos');
-   Add('where qtdeutilidado=0 and idoperacaotalhao='+vIdOpe);
+   Add('where status>-1 and qtdeutilidado=0 and idoperacaotalhao='+vIdOpe);
    try
     Open;
    except
@@ -2790,12 +2785,10 @@ begin
  begin
    Clear;
    Add('select');
-   Add(' b.nome Plano');
+   Add(' planonome Plano');
    Add('from revisaomaquinahist a');
-   Add('left join planorevisao b on a.idplanorevisao=b.id');
-   Add('join maquinaveiculo m on m.id=a.idmaquina');
    Add('where a.idmaquina='+vIdMaquina);
-   Add('and m.horimetro>a.horimetroproxima');
+   Add('and horimetromaquina>a.horimetroproxima');
    Open;
    if qryAux.IsEmpty then
     Result := 'OK'

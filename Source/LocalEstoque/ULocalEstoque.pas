@@ -96,7 +96,8 @@ end;
 
 procedure TfrmLocalEstoque.FormShow(Sender: TObject);
 begin
- frmLocalEstoque.StyleBook := frmPrincipal.StyleBook1;
+ dmDB.TLocalEstoque.Filtered := false;
+ edtPrefixoF.Text :='';
  dmDB.TLocalEstoque.Close;
  dmDB.TLocalEstoque.Open();
  GeraListaLocalEstoque;

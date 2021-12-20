@@ -1175,7 +1175,7 @@ var
 begin
  TThread.CreateAnonymousThread(procedure
  begin
-  dmDB.AbreOperacaoSafra(Filtro);
+  dmDB.AbreOperacaoSafra(Filtro +' and idoperacao=5');
   TThread.Synchronize(nil, procedure
   begin
     listaOperacao.Items.Clear;

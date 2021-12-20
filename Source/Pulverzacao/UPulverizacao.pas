@@ -538,7 +538,7 @@ type
     vIdMaquina,vIdProduto,vIdTipoOcorrencia,vIdOP,vIdOPTipo,vStatusConfere,
     vIdTipoAplicacaoSolido,vIdCultura,vIdReceituario,vIdPul,vIdCobertura,
     vIdOperador,vIdMaquinaSel,vIdProdutoSel,vIdOcorrenciaSel,vIdReceituarioSel,
-    vFlagSync,vIdVariedade:string;
+    vFlagSync,vIdVariedade,vDataOpSelect:string;
     vFinalizandoOP,vTipoOperacao,vDetalhes :integer;
     procedure GeraLista(Filtro:string);
     procedure GeraListaTalhao(IdPull:string);
@@ -578,7 +578,7 @@ var
 begin
 // TThread.CreateAnonymousThread(procedure
 // begin
-  dmDB.AbreOperacaoSafra(' and op.id=2');
+  dmDB.AbreOperacaoSafra(Filtro+' and op.id=2');
 //  TThread.Synchronize(nil, procedure
 //  begin
     listaOperacao.Items.Clear;
@@ -694,7 +694,7 @@ end;
 
 procedure TfrmPulverizacao.Image31Click(Sender: TObject);
 begin
- MudarAba(tbiDetalhes,sender);
+ MudarAba(TabLista,sender);
 end;
 
 procedure TfrmPulverizacao.Image3Click(Sender: TObject);
@@ -735,6 +735,11 @@ begin
   lblDetVariedade.Text :=  TAppearanceListViewItem(listaOperacao.Selected).Objects.FindObjectT<TListItemText>
    ('Text18').Text;
   dmDB.vPulverizacao:=1;
+
+  vDataOpSelect :=
+   TAppearanceListViewItem(listaOperacao.Selected).Objects.FindObjectT<TListItemText>
+    ('Text7').Text;
+
   vIdReceituarioSel :=
    TAppearanceListViewItem(listaOperacao.Selected).Objects.FindObjectT<TListItemImage>
   ('Image13').TagString;
@@ -1535,6 +1540,11 @@ end;
 
 procedure TfrmPulverizacao.btnEditaProdutoClick(Sender: TObject);
 begin
+  if vFlagSync='1' then
+  begin
+   ShowMessage('Operação ja Sincronizada!');
+   Exit;
+  end;
   if vIdProdutoSel.Length=0 then
   begin
     ShowMessage('Nenhum produto para editar!!');
@@ -1549,7 +1559,6 @@ begin
   edtObsProduto.Text    := dmdb.TOperacaoSafraProdutosobservacao.AsString;
   edtDataProduto.Date   := dmdb.TOperacaoSafraProdutosdata.AsDateTime;
   edtProduto.Text       := dmdb.TOperacaoSafraProdutosProduto.AsString;
-  edtProduto.Enabled    := false;
   MudarAba(tbiProdutos,sender);
 end;
 
@@ -1640,6 +1649,11 @@ end;
 
 procedure TfrmPulverizacao.btnExcluirProdutoClick(Sender: TObject);
 begin
+ if vFlagSync='1' then
+ begin
+   ShowMessage('Operação ja Sincronizada!');
+   Exit;
+ end;
  MessageDlg('Deseja deletar esse Produto?', System.UITypes.TMsgDlgType.mtInformation,
   [System.UITypes.TMsgDlgBtn.mbYes,
   System.UITypes.TMsgDlgBtn.mbNo
@@ -1843,6 +1857,7 @@ begin
    edtRomaneio.Visible    := false;
  end;
  LimpaCampos;
+ edtDataMaquina.Date := StrToDate(vDataOpSelect);
  dmDb.TOperacaoSafraMaquinas.Close;
  dmDb.TOperacaoSafraMaquinas.Open;
  dmDb.TOperacaoSafraMaquinas.Insert;
@@ -1862,6 +1877,11 @@ end;
 
 procedure TfrmPulverizacao.btnNovoProdutoClick(Sender: TObject);
 begin
+ if vFlagSync='1' then
+ begin
+   ShowMessage('Operação ja Sincronizada!');
+   Exit;
+ end;
  LimpaCampos;
  dmDB.TOperacaoSafraProdutos.Close;
  dmDB.TOperacaoSafraProdutos.Open;
@@ -1892,6 +1912,7 @@ begin
   edtDataProduto.date         :=date;
   edtDataOcorrencia.Text      :='';
   edtDataFimPul.Text          :='';
+  vFinalizandoOP              :=0;
 end;
 
 procedure TfrmPulverizacao.ListaMaquinasItemClickEx(const Sender: TObject;
@@ -1936,13 +1957,6 @@ procedure TfrmPulverizacao.btnProdutosClick(Sender: TObject);
 begin
   TThread.CreateAnonymousThread(procedure
   begin
-   TThread.Synchronize(nil, procedure
-   begin
-     btnEditaProduto.Enabled   :=vStatusConfere='1';
-     btnExcluirProduto.Enabled :=vStatusConfere='1';
-     btnNovoProduto.Enabled    :=vStatusConfere='1';
-     layBtnDet.Enabled := false;
-   end);
   dmDB.AbreProdutoOperacao(vIdOP);
   GeraListaProdutos;
   tabDet.ActiveTab   := tbiProdutosOP;
@@ -1995,7 +2009,7 @@ begin
   dmDB.TOperacaoSafraidoperacao.AsInteger    := 2;
   dmDB.TOperacaoSafraidsafra.AsString        := vIdSafra;
   dmDB.TOperacaoSafraidResponsavel.AsString  := dmDB.vIdUser;
-  dmDB.TOperacaoSafradatainicio.AsDateTime   := edtDataFimPul.Date;
+  dmDB.TOperacaoSafradatainicio.AsDateTime   := edtDataInicioPul.Date;
   dmDB.TOperacaoSafraareaPrevista.Asstring   := edtAreaPrev.Text;
 
   if edtDataFimPul.Text.Length>0 then
@@ -2262,7 +2276,20 @@ end;
 
 procedure TfrmPulverizacao.Button8Click(Sender: TObject);
 begin
- MudarAba(tbiDetalhes,sender);
+   MessageDlg('Deseja Realmente Sair da Tela?', System.UITypes.TMsgDlgType.mtInformation,
+   [System.UITypes.TMsgDlgBtn.mbYes,
+   System.UITypes.TMsgDlgBtn.mbNo
+   ], 0,
+   procedure(const AResult: System.UITypes.TModalResult)
+   begin
+    case AResult of
+     mrYES:
+     begin
+       MudarAba(tbiDetalhes,sender);
+     end;
+     mrNo:
+    end;
+   end);
 end;
 
 procedure TfrmPulverizacao.cbxCulturaPulverizacaoChange(Sender: TObject);
@@ -2373,7 +2400,7 @@ begin
   if Not Assigned(frmprodutos) then
    Application.CreateForm(Tfrmprodutos, frmprodutos);
    frmprodutos.vTipo :='1';
-  frmAbastecimento.ShowModal(procedure(ModalResult: TModalResult)
+  frmprodutos.ShowModal(procedure(ModalResult: TModalResult)
   begin
     if ModalResult = 0 then
     begin
@@ -2413,6 +2440,8 @@ begin
    begin
     edtReceituario.Text := dmDB.vNomeReceituario;
     vIdReceituario      := dmDB.vIdReceituario;
+    if dmDB.vDataRecomendacao.Length>0 then
+     edtDataInicioPul.Date := StrToDate(dmDB.vDataRecomendacao);
     Obs := dmDB.RetornaObsReceituario(vIdReceituario);
     if obs.Length>1 then
     begin

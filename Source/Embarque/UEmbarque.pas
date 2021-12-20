@@ -106,6 +106,7 @@ type
     Layout22: TLayout;
     Label12: TLabel;
     edtNumNFF: TEdit;
+    Image16: TImage;
     procedure FormShow(Sender: TObject);
     procedure btnSalvarGrupoClick(Sender: TObject);
     procedure btnBuscarClick(Sender: TObject);
@@ -120,6 +121,7 @@ type
     procedure ListaGesture(Sender: TObject; const EventInfo: TGestureEventInfo;
       var Handled: Boolean);
     procedure btnExcluiItemClick(Sender: TObject);
+    procedure Image16Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -256,18 +258,14 @@ end;
 
 procedure TfrmEmbarque.EditButton2Click(Sender: TObject);
 begin
- frmPrincipal.vNovoEmbarque :=1;
- frmContratos := TfrmContratos.Create(Self);
-  try
-    frmContratos.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      edtContrato.Text   := dmDB.vNumeroContrato+'-'+dmDB.vComprador;
-      vIdContrato        := dmDB.vIdContrato;
-    end);
-  finally
-    frmContratos.free;
-  end;
+  frmPrincipal.vNovoEmbarque :=1;
+  if Not Assigned(frmContratos) then
+   Application.CreateForm(TfrmContratos,frmContratos);
+  frmContratos.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    edtContrato.Text   := dmDB.vNumeroContrato+'-'+dmDB.vComprador;
+    vIdContrato        := dmDB.vIdContrato;
+  end);
 end;
 
 procedure TfrmEmbarque.edtBrutoChangeTracking(Sender: TObject);
@@ -390,6 +388,11 @@ begin
      end;
   end);
  end).Start;
+end;
+
+procedure TfrmEmbarque.Image16Click(Sender: TObject);
+begin
+ Close;
 end;
 
 procedure TfrmEmbarque.ListaGesture(Sender: TObject;

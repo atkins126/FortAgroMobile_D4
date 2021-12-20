@@ -568,7 +568,6 @@ type
     TMonitoramentoPontosValoresCaracteristicaStr: TWideStringField;
     TDetReceituarioFlagSync: TIntegerField;
     TDetReceituarioqtdporhe: TBCDField;
-    TDetReceituarioProduto_1: TStringField;
     TReceituariodatarecomendacao: TDateField;
     TReceituariodataprevaplicacao: TDateField;
     TMovLocalEstoque: TFDQuery;
@@ -728,15 +727,6 @@ type
     TUsuariomonitoramentopragas: TWideStringField;
     TUsuariopluviometria: TWideStringField;
     TUsuarioabastecimentoexterno: TIntegerField;
-    TListaRevisaoid: TIntegerField;
-    TListaRevisaoidmaquina: TWideStringField;
-    TListaRevisaoobservacao: TStringField;
-    TListaRevisaodatainicio: TDateField;
-    TListaRevisaodatafim: TDateField;
-    TListaRevisaohorimetro: TBCDField;
-    TListaRevisaohorimetroproxima: TBCDField;
-    TListaRevisaoidplanorevisao: TIntegerField;
-    TListaRevisaonome: TStringField;
     qryConfigTIPODB: TStringField;
     TAbastecimentoimg: TWideMemoField;
     TAbastecimentoimg2: TWideMemoField;
@@ -775,6 +765,71 @@ type
     TDetTalhoesPulAreaPrevista: TBCDField;
     TDetTalhoesPulAreaRealizada: TBCDField;
     TDetTalhoesPulTalhao: TStringField;
+    TDetReceituariodatarecomendacao: TDateField;
+    TDetReceituariodataprevaplicacao: TDateField;
+    TDetReceituarioProdutonome: TStringField;
+    TOperacaoSafrareplante: TIntegerField;
+    Desembarques: TFDQuery;
+    DesembarqueGrid: TFDQuery;
+    Desembarquesid: TFDAutoIncField;
+    Desembarquesstatus: TWideStringField;
+    Desembarquesdatareg: TWideStringField;
+    Desembarquesidusuario: TWideStringField;
+    Desembarquesdataalteracao: TWideStringField;
+    Desembarquesidusuarioalteracao: TWideStringField;
+    Desembarquesidsafra: TWideStringField;
+    Desembarquesidtalhao: TWideStringField;
+    Desembarquesidcultura: TWideStringField;
+    Desembarquesplaca: TStringField;
+    Desembarquesdatadesembarque: TDateField;
+    Desembarqueshoradesembarque: TTimeField;
+    Desembarquestara: TBCDField;
+    Desembarquesbruto: TBCDField;
+    Desembarquesliquido: TBCDField;
+    Desembarquesimp: TBCDField;
+    Desembarquesqueb: TBCDField;
+    Desembarquesverd: TBCDField;
+    Desembarquesavar: TBCDField;
+    Desembarquesumid: TBCDField;
+    Desembarquessyncaws: TWideStringField;
+    Desembarquessyncfaz: TWideStringField;
+    Desembarquesvalornf: TBCDField;
+    DesembarqueGridid: TFDAutoIncField;
+    DesembarqueGridstatus: TWideStringField;
+    DesembarqueGriddatareg: TWideStringField;
+    DesembarqueGrididusuario: TWideStringField;
+    DesembarqueGriddataalteracao: TWideStringField;
+    DesembarqueGrididusuarioalteracao: TWideStringField;
+    DesembarqueGrididsafra: TWideStringField;
+    DesembarqueGrididtalhao: TWideStringField;
+    DesembarqueGrididcultura: TWideStringField;
+    DesembarqueGridplaca: TStringField;
+    DesembarqueGriddatadesembarque: TDateField;
+    DesembarqueGridhoradesembarque: TTimeField;
+    DesembarqueGridtara: TBCDField;
+    DesembarqueGridbruto: TBCDField;
+    DesembarqueGridliquido: TBCDField;
+    DesembarqueGridimp: TBCDField;
+    DesembarqueGridqueb: TBCDField;
+    DesembarqueGridverd: TBCDField;
+    DesembarqueGridavar: TBCDField;
+    DesembarqueGridumid: TBCDField;
+    DesembarqueGridsyncaws: TWideStringField;
+    DesembarqueGridsyncfaz: TWideStringField;
+    DesembarqueGridvalornf: TBCDField;
+    DesembarqueGridTalhao: TStringField;
+    TListaRevisaoid: TIntegerField;
+    TListaRevisaoidmaquina: TWideStringField;
+    TListaRevisaoobservacao: TStringField;
+    TListaRevisaodatainicio: TDateField;
+    TListaRevisaodatafim: TDateField;
+    TListaRevisaohorimetro: TBCDField;
+    TListaRevisaohorimetroproxima: TBCDField;
+    TListaRevisaoidplanorevisao: TIntegerField;
+    TListaRevisaoplanonome: TStringField;
+    TListaRevisaohorimetromaquina: TBCDField;
+    TListaRevisaoStatusStr: TWideStringField;
+    TOperadorMaquinapulverizacao: TIntegerField;
     procedure FDConnBeforeConnect(Sender: TObject);
     procedure TUsuarioReconcileError(DataSet: TFDDataSet; E: EFDException;
       UpdateKind: TFDDatSRowState; var Action: TFDDAptReconcileAction);
@@ -812,11 +867,12 @@ type
       UpdateKind: TFDDatSRowState; var Action: TFDDAptReconcileAction);
     procedure TReceituarioReconcileError(DataSet: TFDDataSet; E: EFDException;
       UpdateKind: TFDDatSRowState; var Action: TFDDAptReconcileAction);
+    procedure DesembarquesReconcileError(DataSet: TFDDataSet; E: EFDException;
+      UpdateKind: TFDDatSRowState; var Action: TFDDAptReconcileAction);
   private
     { Private declarations }
   public
     //SELECAO EM FORMULARIO
-    vImg64Horimetro,vImg64Bomba,
     vIdTalhao,vNomeTalhao,vAreaTalhao,vIdProduto,vNomeProduto,
     vIdOperador,vNomeOperador,vIdMaquinaSel,vMarcaModelo,vIdTipoOcorrencia,
     vNomeTipoOocrrencia,vIdReceituario,vNomeReceituario,vStatusRec,
@@ -824,11 +880,12 @@ type
     vIdPraga,vNomePraga,vIdAtividade,vNomeAtividade,
     vIdContrato,vNumeroContrato,vComprador,vUltimoHorimetro,
     vIdRevSelect,vNomeItemRevSelect,vIdItem,vIdRevisaoIdItem,vIdItemRevSelect,
-    vCodFabricanteProduto:string;
+    vCodFabricanteProduto,vDataRecomendacao:string;
     //
     vIdUser,vIdSegmento,vAgronomo:string;
 
-    vArmazem,vAbastecimento,vPluviometria,vPulverizacao,vRevisaoMaquinas:integer;
+    vArmazem,vAbastecimento,vPluviometria,vPulverizacao,vRevisaoMaquinas,
+    vOpPull,vAplicacaoSolido,vplantio,vMonitoramentopragas,vColheita:integer;
     function  LimpaResut(vResult: string): String;
     function  VerificaTabelaVazia(AnomeTable: string): Boolean;
     function  VerificaTalhaoExiste(idTalhao,idReceituario:string): Boolean;
@@ -902,6 +959,7 @@ type
     procedure DeletaEmbarque(vId:string);
     procedure DeletaAbastecimentoOutros(vId:string);
     procedure DeletaTransferencia(vId:string);
+    procedure DeletaProduto(vIdProdutoSel:string);
 
     procedure AbrirAbastecimento(vFiltro:string);
     procedure AbrirAbastecimentoOutros(vIdAbasteciemnto,vFiltro:string);
@@ -930,6 +988,8 @@ type
     procedure AbreProdutos(vFiltro:string);
     procedure AbreFotos(vID:string);
     procedure AbreMaquinas(vFiltro:string);
+    function  VerificaRevisaoVencida(vIdMaquina:string):string;
+    procedure AbreDesembarque(vFiltro: string);
   end;
 
 var
@@ -1144,8 +1204,6 @@ end;
 
 procedure TdmDB.ReadAccess;
 begin
-  qryConfig.Close;
-  qryConfig.Open;
   qryControAcces.Close;
   qryControAcces.Open;
   if not qryControAcces.IsEmpty then
@@ -1212,8 +1270,7 @@ begin
  begin
    Clear;
    Add('select a.horimetroproxima from revisaomaquinahist a');
-   Add('join maquinaveiculo b on a.idmaquina=b.id');
-   Add('where idMaquina='+idMaquina+' and a.horimetroproxima>b.horimetro');
+   Add('where idMaquina='+idMaquina+' and a.horimetroproxima>horimetromaquina');
    Add('order by a.horimetroproxima');
    Add('limit 1');
    Open;
@@ -1570,7 +1627,7 @@ begin
    Add('select');
    Add('DISTINCT ');
    Add('dr.*,');
-   Add('pr.nome Produto');
+   Add('pr.nome ProdutoNome');
    Add('from detreceiturario dr');
    Add('join produtos pr on pr.id=dr.idproduto');
    Add('where dr.status>-1 and idReceiturario='+idReceituario);
@@ -1618,6 +1675,21 @@ begin
  end;
 end;
 
+procedure TdmDB.AbreDesembarque(vFiltro: string);
+begin
+ with DesembarqueGrid,DesembarqueGrid.SQL do
+ begin
+   Clear;
+   Add('select a.*, t.nome  Talhao');
+   Add('from desembarque a');
+   Add('left join talhoes t ON t.id=a.idtalhao');
+   Add('where a.status=1');
+   if vFiltro.Length>0 then
+    Add(vFiltro);
+   Open;
+ end;
+end;
+
 procedure TdmDB.AbreFotos(vID: string);
 begin
  with QryFotos,QryFotos.SQL do
@@ -1626,8 +1698,8 @@ begin
    Add('select * from abastecimento a');
    Add('where id='+vID);
    Open;
-   vImg64Horimetro := QryFotosimg.AsString;
-   vImg64Bomba     := QryFotosimg2.AsString;
+//   vImg64Horimetro := QryFotosimg.AsString;
+//   vImg64Bomba     := QryFotosimg2.AsString;
  end;
 end;
 
@@ -2009,7 +2081,7 @@ begin
   try
    except
     on E: Exception do
-     frmPrincipal.log.Lines.Add('Erro:' + E.Message );
+     ShowMessage('Erro:' + E.Message );
   end;
 
 
@@ -2020,7 +2092,7 @@ begin
   try
    except
     on E: Exception do
-     frmPrincipal.log.Lines.Add('Erro:' + E.Message );
+     ShowMessage('Erro:' + E.Message );
   end;
 
  end;
@@ -2083,32 +2155,15 @@ begin
     vPulverizacao     := qryAux.FieldByName('pulverizacao').AsInteger;
     if frmPrincipal.vTipoDb='AGRICULTURA' then
     begin
-      //MAQUINAS E ABASTECIMENTO
-      frmPrincipal.TreeMaquinas.Visible :=
-       (qryAux.FieldByName('manutencaomaquinas').AsInteger=1) or
-        (qryAux.FieldByName('abastecimento').AsInteger=1);
-      //so manutencao
-      frmPrincipal.TreeManutencao.Visible :=
-       (qryAux.FieldByName('manutencaomaquinas').AsInteger=1);
-      //So abastecimento
-      frmPrincipal.TreeAbastecimento.Visible :=
-       (qryAux.FieldByName('abastecimento').AsInteger=1);
-      //monitoramento
-      frmPrincipal.TreeMonitoramento.Visible :=
-       (qryAux.FieldByName('monitoramentopragas').AsInteger=1);
-      //pluviometria
-      frmPrincipal.Treepluviometria.Visible :=
-       (qryAux.FieldByName('pluviometria').AsInteger=1);
-      //pulverizacao
-      frmPrincipal.TreeReceituario.Visible :=
-       (qryAux.FieldByName('pulverizacao').AsInteger=1);
-      //Armazem
-      frmPrincipal.TreeArmazem.Visible    :=
-       (qryAux.FieldByName('Armazem').AsInteger=1);
-
-      vArmazem       := qryAux.FieldByName('Armazem').AsInteger;
-      vAbastecimento := qryAux.FieldByName('abastecimento').AsInteger;
-      vPluviometria  := qryAux.FieldByName('pluviometria').AsInteger;
+      vArmazem             := qryAux.FieldByName('Armazem').AsInteger;
+      vAbastecimento       := qryAux.FieldByName('abastecimento').AsInteger;
+      vPluviometria        := qryAux.FieldByName('pluviometria').AsInteger;
+      vPulverizacao        := qryAux.FieldByName('pulverizacao').AsInteger;
+      vRevisaoMaquinas     := qryAux.FieldByName('manutencaomaquinas').AsInteger;
+      vAplicacaoSolido     := qryAux.FieldByName('aplicacaosolido').AsInteger;
+      vplantio             := qryAux.FieldByName('plantio').AsInteger;
+      vMonitoramentopragas := qryAux.FieldByName('monitoramentopragas').AsInteger;
+      vColheita            := qryAux.FieldByName('colheita').AsInteger;
     end;
     SalvarAcesso(Usuario,Senha);
     Result := true
@@ -2187,6 +2242,22 @@ begin
    Clear;
    Add('delete from pluviometria');
    Add('WHERE ID='+vIdPluviometria);
+   ExecSQL;
+ end;
+ qryAux.free;
+end;
+
+procedure TdmDB.DeletaProduto(vIdProdutoSel: string);
+var
+ qryAux : TFDQuery;
+begin
+ qryAux := TFDQuery.Create(nil);
+ qryAux.Connection := FDConn;
+ with qryAux,qryAux.sql do
+ begin
+   Clear;
+   Add('delete from detoperacaosafratalhaoprodutos');
+   Add('WHERE ID='+vIdProdutoSel);
    ExecSQL;
  end;
  qryAux.free;
@@ -2397,20 +2468,14 @@ begin
    Add('delete from operacaosafratalhao');
    Add('where idreceituario=124400');
    ExecSQL;
-
-//   Clear;
-//   Add('delete from receiturario');
-//   ExecSQL;
-//
-//   Clear;
-//   Add('delete from detreceiturariotalhao');
-//   ExecSQL;
-//
-//   Clear;
-//   Add('delete from detreceiturario');
-//   ExecSQL;
  end;
  qryAux.free;
+end;
+
+procedure TdmDB.DesembarquesReconcileError(DataSet: TFDDataSet; E: EFDException;
+  UpdateKind: TFDDatSRowState; var Action: TFDDAptReconcileAction);
+begin
+ ShowMessage(e.Message)
 end;
 
 procedure TdmDB.DeleteReceituario(id: string);
@@ -2458,10 +2523,14 @@ begin
  with TListaRevisao,TListaRevisao.sql do
  begin
    Clear;
-   Add('select a.*,b.nome  from revisaomaquinahist a');
-   Add('left join planorevisao b on a.idplanorevisao=b.id');
+   Add('select');
+   Add(' a.*,');
+   Add(' case');
+   Add('   when horimetromaquina>a.horimetroproxima then ''VENCIDA''');
+   Add('   when horimetromaquina<a.horimetroproxima then ''A VENCER''');
+   Add(' end StatusStr');
+   Add('from revisaomaquinahist a');
    Add('where a.idmaquina='+vIdMaquina);
-   Add('and a.horimetroproxima');
    Open;
  end;
 end;
@@ -2680,7 +2749,7 @@ begin
  begin
    Clear;
    Add('select * from detoperacaosafratalhaoprodutos');
-   Add('where qtdeutilidado=0 and idoperacaotalhao='+vIdOpe);
+   Add('where status>-1 and qtdeutilidado=0 and idoperacaotalhao='+vIdOpe);
    try
     Open;
    except
@@ -2708,6 +2777,24 @@ begin
    result:=qryAux.isempty;
  end;
  qryAux.free;
+end;
+
+function TdmDB.VerificaRevisaoVencida(vIdMaquina: string): string;
+begin
+ with qryAux,qryAux.sql do
+ begin
+   Clear;
+   Add('select');
+   Add(' planonome Plano');
+   Add('from revisaomaquinahist a');
+   Add('where a.idmaquina='+vIdMaquina);
+   Add('and horimetromaquina>a.horimetroproxima');
+   Open;
+   if qryAux.IsEmpty then
+    Result := 'OK'
+   else
+    Result := 'Maquina possui revisão vencida, plano:'+FieldByName('Plano').AsString;
+ end;
 end;
 
 function TdmDB.VerificaRomaneioUsado(idMaquina, Romaneio: string): Boolean;

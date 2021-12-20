@@ -99,7 +99,7 @@ begin
   if vImg=2 then
     imgBomba.Bitmap.Assign(Image);
 end;
-
+{$IFDEF ANDROID}
 procedure TfrmCameraAbastecimento.DisplayMessageCamera(Sender: TObject;
   const APermissions: TArray<string>; const APostProc: TProc);
 begin
@@ -109,7 +109,6 @@ begin
                         APostProc;
                 end);
 end;
-
 procedure TfrmCameraAbastecimento.DisplayMessageLibrary(Sender: TObject;
   const APermissions: TArray<string>; const APostProc: TProc);
 begin
@@ -119,6 +118,7 @@ begin
     APostProc;
   end);
 end;
+{$ENDIF}
 
 function TfrmCameraAbastecimento.Base64FromBitmap(Bitmap: TBitmap): string;
 var
@@ -127,6 +127,7 @@ var
 begin
   Input := TBytesStream.Create;
   try
+    Bitmap.Resize(200,200);
     Bitmap.SaveToStream(Input);
     Input.Position := 0;
     Output := TStringStream.Create('', TEncoding.ASCII);
@@ -223,16 +224,9 @@ end;
 
 procedure TfrmCameraAbastecimento.FormShow(Sender: TObject);
 begin
- if dmDB.vImg64Horimetro.Length>0 then
-  imgHorimetro.Bitmap  := BitmapFromBase64(dmDB.vImg64Horimetro)
- else
-  imgHorimetro.Bitmap  := nil;
- if dmDB.vImg64Bomba.Length>0 then
-  imgBomba.Bitmap  := BitmapFromBase64(dmDB.vImg64Bomba)
- else
-  imgBomba.Bitmap  := nil;
-end;
 
+end;
+{$IFDEF ANDROID}
 procedure TfrmCameraAbastecimento.LibraryPermissionRequestResult(Sender: TObject;
   const APermissions: TArray<string>;
   const AGrantResults: TArray<TPermissionStatus>);
@@ -261,5 +255,5 @@ begin
                 TDialogService.ShowMessage('Você não tem permissão para tirar fotos');
 
 end;
-
+{$ENDIF}
 end.

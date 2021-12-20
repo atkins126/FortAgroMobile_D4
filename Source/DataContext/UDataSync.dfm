@@ -145,6 +145,10 @@ object dmSync: TdmSync
       FieldName = 'idcobertura'
       Origin = 'idcobertura'
     end
+    object qryOpSafraSyncreplante: TIntegerField
+      FieldName = 'replante'
+      Origin = 'replante'
+    end
   end
   object qryOpSafraMaquinasSync: TFDQuery
     CachedUpdates = True
@@ -292,7 +296,6 @@ object dmSync: TdmSync
     end
   end
   object IdHTTP1: TIdHTTP
-    AllowCookies = True
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0
     Request.ContentLength = -1
@@ -2952,6 +2955,138 @@ object dmSync: TdmSync
       Origin = 'idreceiturario'
       Required = True
       Size = 32767
+    end
+  end
+  object Desembarques: TFDQuery
+    CachedUpdates = True
+    Connection = dmDB.FDConn
+    SQL.Strings = (
+      'select * from desembarque'
+      'where status=1 and syncfaz=0')
+    Left = 776
+    Top = 280
+    object Desembarquesid: TFDAutoIncField
+      FieldName = 'id'
+      Origin = 'id'
+      ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
+    end
+    object Desembarquesstatus: TWideStringField
+      FieldName = 'status'
+      Origin = 'status'
+      Size = 32767
+    end
+    object Desembarquesdatareg: TWideStringField
+      FieldName = 'datareg'
+      Origin = 'datareg'
+      Size = 32767
+    end
+    object Desembarquesidusuario: TWideStringField
+      FieldName = 'idusuario'
+      Origin = 'idusuario'
+      Size = 32767
+    end
+    object Desembarquesdataalteracao: TWideStringField
+      FieldName = 'dataalteracao'
+      Origin = 'dataalteracao'
+      Size = 32767
+    end
+    object Desembarquesidusuarioalteracao: TWideStringField
+      FieldName = 'idusuarioalteracao'
+      Origin = 'idusuarioalteracao'
+      Size = 32767
+    end
+    object Desembarquesidsafra: TWideStringField
+      FieldName = 'idsafra'
+      Origin = 'idsafra'
+      Size = 32767
+    end
+    object Desembarquesidtalhao: TWideStringField
+      FieldName = 'idtalhao'
+      Origin = 'idtalhao'
+      Size = 32767
+    end
+    object Desembarquesidcultura: TWideStringField
+      FieldName = 'idcultura'
+      Origin = 'idcultura'
+      Size = 32767
+    end
+    object Desembarquesplaca: TStringField
+      FieldName = 'placa'
+      Origin = 'placa'
+      Size = 15
+    end
+    object Desembarquesdatadesembarque: TDateField
+      FieldName = 'datadesembarque'
+      Origin = 'datadesembarque'
+    end
+    object Desembarqueshoradesembarque: TTimeField
+      FieldName = 'horadesembarque'
+      Origin = 'horadesembarque'
+    end
+    object Desembarquestara: TBCDField
+      FieldName = 'tara'
+      Origin = 'tara'
+      Precision = 15
+      Size = 3
+    end
+    object Desembarquesbruto: TBCDField
+      FieldName = 'bruto'
+      Origin = 'bruto'
+      Precision = 15
+      Size = 3
+    end
+    object Desembarquesliquido: TBCDField
+      FieldName = 'liquido'
+      Origin = 'liquido'
+      Precision = 15
+      Size = 3
+    end
+    object Desembarquesimp: TBCDField
+      FieldName = 'imp'
+      Origin = 'imp'
+      Precision = 15
+      Size = 3
+    end
+    object Desembarquesqueb: TBCDField
+      FieldName = 'queb'
+      Origin = 'queb'
+      Precision = 15
+      Size = 3
+    end
+    object Desembarquesverd: TBCDField
+      FieldName = 'verd'
+      Origin = 'verd'
+      Precision = 15
+      Size = 3
+    end
+    object Desembarquesavar: TBCDField
+      FieldName = 'avar'
+      Origin = 'avar'
+      Precision = 15
+      Size = 3
+    end
+    object Desembarquesumid: TBCDField
+      FieldName = 'umid'
+      Origin = 'umid'
+      Precision = 15
+      Size = 3
+    end
+    object Desembarquessyncaws: TWideStringField
+      FieldName = 'syncaws'
+      Origin = 'syncaws'
+      Size = 32767
+    end
+    object Desembarquessyncfaz: TWideStringField
+      FieldName = 'syncfaz'
+      Origin = 'syncfaz'
+      Size = 32767
+    end
+    object Desembarquesvalornf: TBCDField
+      FieldName = 'valornf'
+      Origin = 'valornf'
+      Precision = 15
+      Size = 3
     end
   end
 end

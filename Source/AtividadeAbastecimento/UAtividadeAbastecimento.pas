@@ -90,6 +90,8 @@ end;
 
 procedure TfrmAtividadeAbastecimento.FormShow(Sender: TObject);
 begin
+ edtNomeFiltro.Text :='';
+ dmDB.Tauxatividadeabastecimento.Filtered :=false;
  dmDB.Tauxatividadeabastecimento.Close;
  dmDB.Tauxatividadeabastecimento.Open();
  GeraLista;

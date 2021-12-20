@@ -22,7 +22,6 @@ uses
   Maquinas in '..\Maquinas\Maquinas.pas' {frmMaquinas},
   UMonitoramentoPraga in '..\MonitoramentoPraga\UMonitoramentoPraga.pas' {frmMonitoramento},
   Umsg in '..\msg\Umsg.pas' {frmMsg},
-  UOperacoes in '..\Operacoes\UOperacoes.pas' {frmOperacao},
   UOperadorMaquina in '..\OperadorMaquina\UOperadorMaquina.pas' {frmOperadorMaquina},
   UPlanoRevisao in '..\PlanoRevisao\UPlanoRevisao.pas' {frmPlanoRevisao},
   UPluviometria in '..\Pluviometria\UPluviometria.pas' {frmPluviometria},
@@ -36,7 +35,13 @@ uses
   UTalhoes in '..\Talhoes\UTalhoes.pas' {frmTalhoes},
   UTipoOcorrencia in '..\TipoOcorrencia\UTipoOcorrencia.pas' {frmTipoOcorrencia},
   u99Permissions in '..\Util\u99Permissions.pas',
-  UCamAbastecimento in '..\Camera\UCamAbastecimento.pas' {frmCameraAbastecimento};
+  UPulverizacao in '..\Pulverzacao\UPulverizacao.pas' {frmPulverizacao},
+  UQrCod in '..\NewCamera\UQrCod.pas' {FrmQrCode},
+  UPlantio in '..\Plantio\UPlantio.pas' {frmPlantio},
+  UColheita in '..\Colheita\UColheita.pas' {frmColheita},
+  UAplicacaoSolido in '..\AplicacaoSolido\UAplicacaoSolido.pas' {frmAplicacaoSolido},
+  UOperacoes in '..\Extra\UOperacoes.pas' {frmOperacao},
+  UDesembarque in '..\Desembarque\UDesembarque.pas' {frmDesembarque};
 
 {$R *.res}
 

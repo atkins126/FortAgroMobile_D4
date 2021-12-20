@@ -43,17 +43,18 @@ type
     Label82: TLabel;
     Rectangle63: TRectangle;
     Label84: TLabel;
+    SearchEditButton1: TSearchEditButton;
     procedure FormShow(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
       Shift: TShiftState);
     procedure btnSelecionarClick(Sender: TObject);
-    procedure edtNomeFiltroChangeTracking(Sender: TObject);
     procedure btnFecharClick(Sender: TObject);
     procedure ListaItemClickEx(const Sender: TObject; ItemIndex: Integer;
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
     procedure ListaGesture(Sender: TObject; const EventInfo: TGestureEventInfo;
       var Handled: Boolean);
     procedure Rectangle63Click(Sender: TObject);
+    procedure SearchEditButton1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -96,6 +97,26 @@ begin
  end
 end;
 
+procedure TfrmContratos.SearchEditButton1Click(Sender: TObject);
+begin
+ if edtNomeFiltro.Text.Length>0 then
+ begin
+   dmDb.ContratosGrid.Filtered := false;
+   if frmPrincipal.vNovoEmbarque=1 then
+    dmDb.ContratosGrid.Filter   := 'numerocontrato ='+edtNomeFiltro.Text+' and status=3'
+   else
+    dmDb.ContratosGrid.Filter   := 'numerocontrato ='+edtNomeFiltro.Text;
+   dmDb.ContratosGrid.Filtered := true;
+ end
+ else
+ begin
+   dmDb.ContratosGrid.Filtered := false;
+   dmDb.ContratosGrid.Close;
+   dmDb.ContratosGrid.Open;
+ end;
+ GeraLista;
+end;
+
 procedure TfrmContratos.btnFecharClick(Sender: TObject);
 begin
  Close;
@@ -115,26 +136,6 @@ begin
   dmDB.vNumeroContrato     := vNumeroContrato;
   Close;
  end
-end;
-
-procedure TfrmContratos.edtNomeFiltroChangeTracking(Sender: TObject);
-begin
- if edtNomeFiltro.Text.Length>0 then
- begin
-   dmDb.ContratosGrid.Filtered := false;
-   if frmPrincipal.vNovoEmbarque=1 then
-    dmDb.ContratosGrid.Filter   := 'numerocontrato ='+edtNomeFiltro.Text+' and status=3'
-   else
-    dmDb.ContratosGrid.Filter   := 'numerocontrato ='+edtNomeFiltro.Text;
-   dmDb.ContratosGrid.Filtered := true;
- end
- else
- begin
-   dmDb.ContratosGrid.Filtered := false;
-   dmDb.ContratosGrid.Close;
-   dmDb.ContratosGrid.Open;
- end;
- GeraLista;
 end;
 
 procedure TfrmContratos.FormKeyUp(Sender: TObject; var Key: Word;

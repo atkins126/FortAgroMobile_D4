@@ -95,11 +95,22 @@ end;
 
 procedure TfrmOperadorMaquina.FormShow(Sender: TObject);
 begin
- frmOperadorMaquina.StyleBook := frmPrincipal.StyleBook1;
- BindSourceDB1.DataSet          := nil;
- dmDB.TOperadorMaquina.Close;
- dmDB.TOperadorMaquina.Open();
- BindSourceDB1.DataSet          := dmDB.TOperadorMaquina;
+ dmDB.TOperadorMaquina.Filtered := false;
+ edtNomeFiltro.Text       :='';
+ if dmDB.vOpPull=1 then
+ begin
+  dmDB.TOperadorMaquina.Filtered := false;
+  dmDB.TOperadorMaquina.Close;
+  dmDB.TOperadorMaquina.Open();
+  dmDB.TOperadorMaquina.Filter :='pulverizacao=1';
+  dmDB.TOperadorMaquina.Filtered := true;
+ end
+ else
+ begin
+  dmDB.TOperadorMaquina.Filtered := false;
+  dmDB.TOperadorMaquina.Close;
+  dmDB.TOperadorMaquina.Open();
+ end;
  GeraLista;
 end;
 

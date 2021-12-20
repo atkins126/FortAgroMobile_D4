@@ -553,6 +553,31 @@ type
     TSyncAbastecimentoimg4: TWideMemoField;
     TSyncAbastecimentoimg5: TWideMemoField;
     TSyncAbastecimentoexterno: TWideStringField;
+    qryOpSafraSyncreplante: TIntegerField;
+    Desembarques: TFDQuery;
+    Desembarquesid: TFDAutoIncField;
+    Desembarquesstatus: TWideStringField;
+    Desembarquesdatareg: TWideStringField;
+    Desembarquesidusuario: TWideStringField;
+    Desembarquesdataalteracao: TWideStringField;
+    Desembarquesidusuarioalteracao: TWideStringField;
+    Desembarquesidsafra: TWideStringField;
+    Desembarquesidtalhao: TWideStringField;
+    Desembarquesidcultura: TWideStringField;
+    Desembarquesplaca: TStringField;
+    Desembarquesdatadesembarque: TDateField;
+    Desembarqueshoradesembarque: TTimeField;
+    Desembarquestara: TBCDField;
+    Desembarquesbruto: TBCDField;
+    Desembarquesliquido: TBCDField;
+    Desembarquesimp: TBCDField;
+    Desembarquesqueb: TBCDField;
+    Desembarquesverd: TBCDField;
+    Desembarquesavar: TBCDField;
+    Desembarquesumid: TBCDField;
+    Desembarquessyncaws: TWideStringField;
+    Desembarquessyncfaz: TWideStringField;
+    Desembarquesvalornf: TBCDField;
     procedure TSyncPragasReconcileError(DataSet: TFDDataSet; E: EFDException;
       UpdateKind: TFDDatSRowState; var Action: TFDDAptReconcileAction);
     procedure TSyncReceituarioReconcileError(DataSet: TFDDataSet;
@@ -575,6 +600,7 @@ type
     procedure AlterarFlagAbastecimentoOutros;
     procedure AlterarFlagMovLocalEstoque;
     procedure AlterarFlagEmbarque(vId:String);
+    procedure AlterarFlagDesembarque(vId:String);
     procedure AlteraFlagMonitoramento(vIdMonitoramento:string);
     procedure AlteraFlagMonitoramentoPontos(vIdPonto: string);
     procedure AlteraFlagMonitoramentoPontosValores(vIdPonto: string);
@@ -647,6 +673,7 @@ type
     function PostMovLocalEstoque:string;
 
     function PostEmbarques:string;
+    function PostDesembarques: string;
     function PostItemRevisao:string;
     function PostRevisao:string;
     function PostRevisaoItens:string;
@@ -806,6 +833,33 @@ begin
  Result     := vReultHTTP;
 end;
 
+function TdmSync.PostDesembarques: string;
+var
+ URL,vReultHTTP:STRING;
+ JsonToSend  : TStringStream;
+ I:integer;
+begin
+  Desembarques.Close;
+  Desembarques.Open;
+ if not Desembarques.IsEmpty then
+ begin
+   JsonToSend := TStringStream.Create(nil);
+   Desembarques.SaveToStream(JsonToSend,sfJSON);
+   Url := 'http://'+Host+':'+Porta+'/Desembarques';
+   IdHTTP1.Request.CustomHeaders.Clear;
+   IdHTTP1.Request.ContentType := 'application/json';
+   IdHTTP1.Request.Accept      := 'application/json';
+   vReultHTTP := IdHTTP1.Post(url,JsonToSend);
+   if copy(vReultHTTP,0,4)='{"OK'then
+   begin
+     vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
+     vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+     AlterarFlagDesembarque(vReultHTTP);
+   end;
+ end;
+ Result     := vReultHTTP;
+end;
+
 function TdmSync.PostEnviaEmailOrcamento(idOrcamento:string):string;
 var
  url,vJsonString,vReultHTTP,vReultHTTPc :string;
@@ -851,7 +905,7 @@ begin
      except
      on E: Exception do
       begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
       end;
    end;
 end;
@@ -912,7 +966,7 @@ begin
    Open;
    while not qryAux.Eof do
    begin
-     frmPrincipal.log.Lines.Add('Abrindo Tabela Monitoramento');
+     frmPrincipal.lblSyncData.Text:=('Abrindo Tabela Monitoramento');
      AbreMonitoramentoSinc(qryAux.FieldByName('id').AsString);
      TMonitoramentoPraga.First;
      if not TMonitoramentoPraga.IsEmpty then
@@ -923,19 +977,19 @@ begin
        IdHTTP1.Request.CustomHeaders.Clear;
        IdHTTP1.Request.ContentType := 'application/json';
        IdHTTP1.Request.Accept      := 'application/json';
-       frmPrincipal.log.Lines.Add('Post :'+JsonToSend.ToString);
+       frmPrincipal.lblSyncData.Text:=('Post :'+JsonToSend.ToString);
        vReultHTTP := IdHTTP1.Post(url,JsonToSend);
-       frmPrincipal.log.Lines.Add(vReultHTTP);
+       frmPrincipal.lblSyncData.Text:=(vReultHTTP);
        if copy(vReultHTTP,0,4)='{"OK'then
        begin
          vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
          vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
-         frmPrincipal.log.Lines.Add('Atauliza id Monitoramento de '+qryAux.FieldByName('id').AsString
+         frmPrincipal.lblSyncData.Text:=('Atauliza id Monitoramento de '+qryAux.FieldByName('id').AsString
          +' para '+vReultHTTP);
          dmDB.AtualizaIdMonitoramento(qryAux.FieldByName('id').AsString,vReultHTTP);
-         frmPrincipal.log.Lines.Add('Enviando Pontos');
+         frmPrincipal.lblSyncData.Text:=('Enviando Pontos');
          PostMonitoramentoPontos(vReultHTTP);
-         frmPrincipal.log.Lines.Add('Enviando Pragas');
+         frmPrincipal.lblSyncData.Text:=('Enviando Pragas');
          dmSync.AlteraFlagMonitoramento(vReultHTTP);
        end;
      end;
@@ -1081,7 +1135,7 @@ begin
            dmDB.TCulturas.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Culturas Baixadas com Sucesso!'
@@ -1091,7 +1145,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1160,9 +1214,8 @@ begin
              vQryAux.ExecSQL;
             except
             on E: Exception do
-              result:=('Erro: ' + E.Message );
+              Raise exception.Create(E.Message);
             end;
-
           end;
        end;
        result:='Detalhe Receituario Baixadas com Sucesso!'
@@ -1172,7 +1225,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
    vQryAux.Free;
@@ -1238,7 +1291,7 @@ begin
            vQryAux.ExecSQL;
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
         end;
 //        dmDB.TDetReceituarioTalhao.Close;
@@ -1253,7 +1306,7 @@ begin
 //           dmDB.TDetReceituarioTalhao.ApplyUpdates(-1);
 //          except
 //            on E: Exception do
-//             result:=('Erro: ' + E.Message );
+//             Raise exception.Create(E.Message);
 //          end;
      end;
      result:='Talhoes Receituario Baixadas com Sucesso!'
@@ -1263,7 +1316,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
    vQryAux.Free;
@@ -1311,7 +1364,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1364,7 +1417,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1402,7 +1455,7 @@ begin
                   ExecSQL;
               except
                 on E: Exception do
-                 result:=('Erro: ' + E.Message );
+                 Raise exception.Create(E.Message);
               end;
             end;
           end;
@@ -1414,7 +1467,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1452,7 +1505,7 @@ begin
                   ExecSQL;
               except
                 on E: Exception do
-                 result:=('Erro: ' + E.Message );
+                 Raise exception.Create(E.Message);
               end;
             end;
           end;
@@ -1464,7 +1517,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1499,10 +1552,10 @@ begin
               Clear;
               Add(vID);
               try
-                  ExecSQL;
+                ExecSQL;
               except
                 on E: Exception do
-                 result:=('Erro: ' + E.Message );
+                 Raise exception.Create(E.Message);
               end;
             end;
           end;
@@ -1514,7 +1567,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 
@@ -1558,7 +1611,12 @@ begin
             'TRevisaoItens','',[rfReplaceAll]);
            TRevisaoItens.FieldByName(vField).AsString := vJoGetJ.GetValue(vField).value;
           end;
-          TRevisaoItens.ApplyUpdates(-1);
+          try
+            TRevisaoItens.ApplyUpdates(-1);
+          except
+          on E: Exception do
+            Raise exception.Create(E.Message);
+          end;
        end;
        result:='Items Revisao Baixados com Sucesso!'
     end
@@ -1567,7 +1625,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1621,7 +1679,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1660,7 +1718,7 @@ begin
            dmDB.TAuxCobertura.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Coberturas Baixadas com Sucesso!'
@@ -1670,7 +1728,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1727,7 +1785,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1781,7 +1839,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1819,7 +1877,7 @@ begin
            dmDB.TCultivares.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Variedades Baixadas com Sucesso!'
@@ -1829,7 +1887,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1877,7 +1935,7 @@ begin
            dmDB.TGetTalhoes.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Talhões Baixado com Sucesso!'
@@ -1887,7 +1945,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1926,7 +1984,7 @@ begin
            dmDB.TTipoAplicacaoSolido.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Tipo Aplicação Solido Baixado com Sucesso!'
@@ -1936,7 +1994,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -1975,7 +2033,7 @@ begin
            dmDB.TAuxOcorrencia.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Tipo de Ocorrencia Baixado com Sucesso!'
@@ -1985,7 +2043,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -2024,7 +2082,7 @@ begin
            dmDB.TSafra.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Safra Baixado com Sucesso!'
@@ -2034,7 +2092,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -2077,7 +2135,7 @@ begin
            dmDB.TSetor.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Setor Baixado com Sucesso!'
@@ -2087,7 +2145,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -2379,6 +2437,17 @@ begin
  end;
 end;
 
+procedure TdmSync.AlterarFlagDesembarque(vId:String);
+begin
+ with qryAux,qryAux.SQL do
+ begin
+   Clear;
+   Add('update Desembarque set syncfaz=1');
+   Add('where id in('+vId+')');
+   ExecSQL;
+ end;
+end;
+
 procedure TdmSync.AlterarFlagSyncPluviometria;
 begin
  with qryAux,qryAux.SQL do
@@ -2545,7 +2614,7 @@ begin
            dmDB.TAreas.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Areas Baixados com Sucesso!'
@@ -2555,7 +2624,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -2625,7 +2694,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -2697,7 +2766,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -2735,7 +2804,7 @@ begin
                   ExecSQL;
               except
                 on E: Exception do
-                 result:=('Erro: ' + E.Message );
+                 Raise exception.Create(E.Message);
               end;
             end;
           end;
@@ -2747,7 +2816,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -2869,7 +2938,7 @@ var
  txtJson     : TJsonTextWriter;
  LJsonObj    : TJSONObject;
 begin
-  frmPrincipal.log.Lines.Add('Enviando Produtos:'+idOp);
+  frmPrincipal.lblSyncData.Text:=('Enviando Produtos:'+idOp);
   qryOpSafraProdutosSync.Close;
   qryOpSafraProdutosSync.Open;
   qryOpSafraProdutosSync.Filtered := false;
@@ -2935,14 +3004,14 @@ var
  txtJson     : TJsonTextWriter;
  LJsonObj    : TJSONObject;
 begin
-  frmPrincipal.log.Lines.Add('Enviando Maquina Operacao:'+idOp);
+  frmPrincipal.lblSyncData.Text:=('Enviando Maquina Operacao:'+idOp);
   try
     AbreMaquinaSafraTalhao(idOp);
   except
    on E : Exception do
     frmPrincipal.myShowMenssagem('Erro ao Sincronizar Operacao:'+e.Message);
   end;
-  frmPrincipal.log.Lines.Add('Qtd Registro:'+intToStr(qryOpSafraMaquinasSync.RecordCount));
+  frmPrincipal.lblSyncData.Text:=('Qtd Registro:'+intToStr(qryOpSafraMaquinasSync.RecordCount));
   C := qryOpSafraMaquinasSync.RecordCount;
   if not qryOpSafraMaquinasSync.IsEmpty then
     begin
@@ -3001,6 +3070,7 @@ begin
          except
           on E: EIdHTTPProtocolException do
           begin
+            Raise exception.Create(E.Message);
             Result          := ('Erro ao Sincronizar Operacao:'+e.Message);
             Break;
           end;
@@ -3082,6 +3152,7 @@ begin
          except
           on E: EIdHTTPProtocolException do
           begin
+            Raise exception.Create(E.Message);
             Result          := ('Erro ao Sincronizar Operacao:'+e.Message);
             Break;
           end;
@@ -3172,9 +3243,9 @@ begin
          end;
          qryOpSafraPulverizacao.Next;
          except
-          on E: EIdHTTPProtocolException do
+          on E: Exception do
           begin
-            frmPrincipal.myShowMenssagem('Erro ao Sincronizar Operacao:'+e.Message);
+            Raise exception.Create(E.Message);
             Break;
           end;
        end;
@@ -3201,18 +3272,23 @@ begin
    IdHTTP1.Request.CustomHeaders.Clear;
    IdHTTP1.Request.Accept      := 'application/json';
    IdHTTP1.Request.ContentType := 'application/json';
-   ResponseBody := IdHTTP1.Post(url,JsonToSend);
-   if copy(ResponseBody,0,4)='{"OK'then
-   begin
-     vReultHTTP := StringReplace(ResponseBody,'{"OK":"','',[rfReplaceAll]);
-     vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
-     dmSync.PostReceituarioDet(TSyncReceituario.FieldByName('id').AsString);
-     dmSync.PostReceituarioDetTalhao(TSyncReceituario.FieldByName('id').AsString);
-     vReultHTTP := StringReplace(ResponseBody,'{"OK":"','',[rfReplaceAll]);
-     vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
-     dmDB.AlteraStatusReceituario(vReultHTTP,'1');
+   try
+     ResponseBody := IdHTTP1.Post(url,JsonToSend);
+     if copy(ResponseBody,0,4)='{"OK'then
+     begin
+       vReultHTTP := StringReplace(ResponseBody,'{"OK":"','',[rfReplaceAll]);
+       vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+       dmSync.PostReceituarioDet(TSyncReceituario.FieldByName('id').AsString);
+       dmSync.PostReceituarioDetTalhao(TSyncReceituario.FieldByName('id').AsString);
+       vReultHTTP := StringReplace(ResponseBody,'{"OK":"','',[rfReplaceAll]);
+       vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+       dmDB.AlteraStatusReceituario(vReultHTTP,'1');
+     end;
+     Result     := vReultHTTP;
+   except
+   on E: Exception do
+     Raise exception.Create(E.Message);
    end;
-  Result     := vReultHTTP;
  end;
 end;
 
@@ -3235,13 +3311,17 @@ begin
    IdHTTP1.Request.CustomHeaders.Clear;
    IdHTTP1.Request.ContentType := 'application/json';
    IdHTTP1.Request.Accept      := 'application/json';
-   vReultHTTP := IdHTTP1.Post(url,JsonToSend);
-
-   if copy(vReultHTTP,0,4)='{"OK'then
-   begin
-     AlterarFlagSyncStand;
-     vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
-     vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+   try
+     vReultHTTP := IdHTTP1.Post(url,JsonToSend);
+     if copy(vReultHTTP,0,4)='{"OK'then
+     begin
+       AlterarFlagSyncStand;
+       vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
+       vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+     end;
+    except
+    on E: Exception do
+     Raise exception.Create(E.Message);
    end;
  end;
  Result     := vReultHTTP;
@@ -3266,14 +3346,19 @@ begin
    IdHTTP1.Request.CustomHeaders.Clear;
    IdHTTP1.Request.ContentType := 'application/json';
    IdHTTP1.Request.Accept      := 'application/json';
-   vReultHTTP := IdHTTP1.Post(url,JsonToSend);
-   if copy(vReultHTTP,0,4)='{"OK'then
-   begin
-     AlterarFlagSyncPluviometria;
-     vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
-     vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+   try
+     vReultHTTP := IdHTTP1.Post(url,JsonToSend);
+     if copy(vReultHTTP,0,4)='{"OK'then
+     begin
+       AlterarFlagSyncPluviometria;
+       vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
+       vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+     end;
+   except
+    on E: Exception do
+     Raise exception.Create(E.Message);
    end;
- end;
+  end;
  Result     := vReultHTTP;
 end;
 
@@ -3340,11 +3425,16 @@ begin
     IdHTTP1.Request.CustomHeaders.Clear;
    IdHTTP1.Request.ContentType := 'application/json';
    IdHTTP1.Request.Accept      := 'application/json';
-   ResponseBody := IdHTTP1.Post(url,JsonToSend);
-   if copy(ResponseBody,0,4)='{"OK'then
-   begin
-     vReultHTTP := StringReplace(ResponseBody,'{"OK":"','',[rfReplaceAll]);
-     vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+   try
+     ResponseBody := IdHTTP1.Post(url,JsonToSend);
+     if copy(ResponseBody,0,4)='{"OK'then
+     begin
+       vReultHTTP := StringReplace(ResponseBody,'{"OK":"','',[rfReplaceAll]);
+       vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+     end;
+   except
+    on E: Exception do
+     Raise exception.Create(E.Message);
    end;
  end;
  Result     := vReultHTTP;
@@ -3364,11 +3454,16 @@ begin
    Url := 'http://'+Host+':'+Porta+'/OperacaoDetReceituarioTalhao';
    IdHTTP1.Request.Accept      := 'application/json';
    IdHTTP1.Request.ContentType := 'application/json';
-   ResponseBody := IdHTTP1.Post(url,JsonToSend);
-   if copy(ResponseBody,0,18)='{"OK":"'then
-   begin
-     vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
-     vReultHTTP := StringReplace(vReultHTTP,'"}]}','',[rfReplaceAll]);
+   try
+     ResponseBody := IdHTTP1.Post(url,JsonToSend);
+     if copy(ResponseBody,0,18)='{"OK":"'then
+     begin
+       vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
+       vReultHTTP := StringReplace(vReultHTTP,'"}]}','',[rfReplaceAll]);
+     end;
+   except
+    on E: Exception do
+     Raise exception.Create(E.Message);
    end;
    Result     := vReultHTTP;
  end;
@@ -3400,12 +3495,17 @@ begin
        IdHTTP1.Request.CustomHeaders.Clear;
        IdHTTP1.Request.ContentType := 'application/json';
        IdHTTP1.Request.Accept      := 'application/json';
-       vReultHTTP := IdHTTP1.Post(url,JsonToSend);
-       if copy(vReultHTTP,0,4)='{"OK'then
-       begin
-         vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
-         vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
-         AlterarFlagRevisao(vQryLoop.FieldByName('ID').AsString,vReultHTTP);
+       try
+         vReultHTTP := IdHTTP1.Post(url,JsonToSend);
+         if copy(vReultHTTP,0,4)='{"OK'then
+         begin
+           vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
+           vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+           AlterarFlagRevisao(vQryLoop.FieldByName('ID').AsString,vReultHTTP);
+         end;
+       except
+       on E: Exception do
+        Raise exception.Create(E.Message);
        end;
     end;
     vQryLoop.Next;
@@ -3439,12 +3539,17 @@ begin
        IdHTTP1.Request.CustomHeaders.Clear;
        IdHTTP1.Request.ContentType := 'application/json';
        IdHTTP1.Request.Accept      := 'application/json';
-       vReultHTTP := IdHTTP1.Post(url,JsonToSend);
-       if copy(vReultHTTP,0,4)='{"OK'then
-       begin
-         vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
-         vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
-         AlterarFlagRevisaoItem(vQryLoop.FieldByName('ID').AsString);
+       try
+         vReultHTTP := IdHTTP1.Post(url,JsonToSend);
+         if copy(vReultHTTP,0,4)='{"OK'then
+         begin
+           vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
+           vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+           AlterarFlagRevisaoItem(vQryLoop.FieldByName('ID').AsString);
+         end;
+       except
+        on E: Exception do
+         Raise exception.Create(E.Message);
        end;
     end;
     vQryLoop.Next;
@@ -3478,12 +3583,17 @@ begin
        IdHTTP1.Request.CustomHeaders.Clear;
        IdHTTP1.Request.ContentType := 'application/json';
        IdHTTP1.Request.Accept      := 'application/json';
-       vReultHTTP := IdHTTP1.Post(url,JsonToSend);
-       if copy(vReultHTTP,0,4)='{"OK'then
-       begin
-         vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
-         vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
-         AlterarFlagRevisaoItem(vQryLoop.FieldByName('ID').AsString);
+       try
+         vReultHTTP := IdHTTP1.Post(url,JsonToSend);
+         if copy(vReultHTTP,0,4)='{"OK'then
+         begin
+           vReultHTTP := StringReplace(vReultHTTP,'{"OK":"','',[rfReplaceAll]);
+           vReultHTTP := StringReplace(vReultHTTP,'"}','',[rfReplaceAll]);
+           AlterarFlagRevisaoItem(vQryLoop.FieldByName('ID').AsString);
+         end;
+       except
+        on E: Exception do
+         Raise exception.Create(E.Message);
        end;
     end;
     vQryLoop.Next;
@@ -3526,7 +3636,10 @@ procedure TdmSync.TSyncReceituarioReconcileError(DataSet: TFDDataSet;
   E: EFDException; UpdateKind: TFDDatSRowState;
   var Action: TFDDAptReconcileAction);
 begin
+  TThread.Synchronize(nil, procedure
+ begin
   frmPrincipal.myShowMenssagem(e.Message);
+ end);
 end;
 
 function TdmSync.VerificaReceituarioExiste(id: string): Boolean;
@@ -3571,7 +3684,7 @@ begin
     begin
      while not qryOpSafraSync.Eof do
      begin
-       frmPrincipal.log.Lines.Add('Enviando Atividade :'+intToStr(x)+ ' De '+ frmPrincipal.vAtvPendente);
+       frmPrincipal.lblSyncData.Text:=('Enviando Atividade :'+intToStr(x)+ ' De '+ frmPrincipal.vAtvPendente);
        StrAux  := TStringWriter.Create;
        txtJson := TJsonTextWriter.Create(StrAux);
        txtJson.Formatting := TJsonFormatting.Indented;
@@ -3625,29 +3738,27 @@ begin
        IdHTTP1.Request.Accept      := 'application/json';
        try
          vReultHTTP := IdHTTP1.Post(url,JsonToSend);
-
          if copy(vReultHTTP,0,4)='{"Ok'then
          begin
            vReultHTTPClean := StringReplace(vReultHTTP,'{"Ok":"','',[rfReplaceAll]);
            vReultHTTPClean := StringReplace(vReultHTTPClean,'"}','',[rfReplaceAll]);
-           frmPrincipal.log.Lines.Add('Atualizando Operacao');
+           frmPrincipal.lblSyncData.Text:=('Atualizando Operacao');
            dmDB.AtualizaIdOperacao(qryOpSafraSyncid.AsString,vReultHTTPClean);
-           frmPrincipal.log.Lines.Add('Enviando Maquinas operação');
+           frmPrincipal.lblSyncData.Text:=('Enviando Maquinas operação');
            PostOperacaoSafraMaquinasAplSolidos(vReultHTTPClean);
-           frmPrincipal.log.Lines.Add('Enviando Produtos operação');
+           frmPrincipal.lblSyncData.Text:=('Enviando Produtos operação');
            PostOperacaoSafraProdutosAplSolidos(vReultHTTPClean);
-           frmPrincipal.log.Lines.Add('Enviando Ocorrencia operação');
+           frmPrincipal.lblSyncData.Text:=('Enviando Ocorrencia operação');
            PostOperacaoSafraOcorrenciaAplSolidos(vReultHTTPClean);
-           frmPrincipal.log.Lines.Add('Enviando Vazao operação');
+           frmPrincipal.lblSyncData.Text:=('Enviando Vazao operação');
            PostOperacaoSafraVazaoPul(vReultHTTPClean);
-           frmPrincipal.log.Lines.Add('Mudando Flag operação');
+           frmPrincipal.lblSyncData.Text:=('Mudando Flag operação');
            dmDB.AlteraFlagSyncOperaca(vReultHTTPClean);
          end;
          except
           on E: EIdHTTPProtocolException do
           begin
-            frmPrincipal.log.Lines.Add('Erro ao Sincronizar Operacao:'+e.Message);
-            frmPrincipal.myShowMenssagem('Erro ao Sincronizar Operacao:'+e.Message);
+            Raise exception.Create(E.Message);
             Break;
           end;
        end;
@@ -3693,7 +3804,7 @@ begin
            dmDB.TOperacoes.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Operacoes Baixados com Sucesso!'
@@ -3703,7 +3814,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -3741,7 +3852,7 @@ begin
                   ExecSQL;
               except
                 on E: Exception do
-                 result:=('Erro: ' + E.Message );
+                 Raise exception.Create(E.Message);
               end;
             end;
           end;
@@ -3753,7 +3864,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -3801,7 +3912,7 @@ begin
           GetDetReceituarioTalhoes(vId);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end
     end
@@ -3810,7 +3921,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -3848,7 +3959,7 @@ begin
                 ExecSQL;
             except
               on E: Exception do
-               result:=('Erro: ' + E.Message );
+               Raise exception.Create(E.Message);
             end;
           end;
         end;
@@ -3860,7 +3971,7 @@ begin
  except
  on E: Exception do
    begin
-     result:='Erro ao comunicar com Servidor:'+E.Message;
+     Raise exception.Create(E.Message);
    end;
  end;
 end;
@@ -3912,7 +4023,7 @@ begin
             dmDB.TMaquina.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
        end;
        result:='Maquinas Baixados com Sucesso!'
@@ -3922,7 +4033,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -4005,8 +4116,8 @@ begin
           try
            dmDB.TUsuario.ApplyUpdates(-1);
           except
-            on E: Exception do
-             result:=('Erro: ' + E.Message );
+          on E: Exception do
+            Raise exception.Create(E.Message);
           end;
        end;
        result:='Usuarios Baixados com Sucesso'
@@ -4014,7 +4125,7 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+      Raise exception.Create(E.Message);
      end;
    end;
 end;
@@ -4056,16 +4167,17 @@ begin
             dmDB.TOperadorMaquina.Open;
             dmDB.TOperadorMaquina.Insert;
           end;
-          dmDB.TOperadorMaquinaId.AsString          := vId;
-          dmDB.TOperadorMaquinanome.AsString        := vJoGetJ.GetValue('NOME').value;
-          dmDB.TOperadorMaquinarg.AsString          := vJoGetJ.GetValue('RG').value;
-          dmDB.TOperadorMaquinacpf.AsString         := vJoGetJ.GetValue('CPF').value;
-          dmDB.TOperadorMaquinaSTATUS.AsString      := vJoGetJ.GetValue('STATUS').value;
+          dmDB.TOperadorMaquinaId.AsString            := vId;
+          dmDB.TOperadorMaquinanome.AsString          := vJoGetJ.GetValue('NOME').value;
+          dmDB.TOperadorMaquinarg.AsString            := vJoGetJ.GetValue('RG').value;
+          dmDB.TOperadorMaquinacpf.AsString           := vJoGetJ.GetValue('CPF').value;
+          dmDB.TOperadorMaquinaSTATUS.AsString        := vJoGetJ.GetValue('STATUS').value;
+          dmDB.TOperadorMaquinapulverizacao.AsString  := vJoGetJ.GetValue('PULVERIZACAO').value;
           try
            dmDB.TOperadorMaquina.ApplyUpdates(-1);
           except
             on E: Exception do
-             result:=('Erro: ' + E.Message );
+             Raise exception.Create(E.Message);
           end;
         end;
         result:='Operador Baixados com Sucesso!'
@@ -4075,10 +4187,11 @@ begin
    except
    on E: Exception do
      begin
-       result:='Erro ao comunicar com Servidor:'+E.Message;
+       Raise exception.Create(E.Message);
      end;
    end;
 end;
 
 
 end.
+

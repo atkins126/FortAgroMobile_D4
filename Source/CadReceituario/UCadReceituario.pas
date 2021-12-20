@@ -184,7 +184,7 @@ type
     procedure GerarListaProdutosReceituario(IdReceituario:string);
   public
     vIdReceituario,vNomeReceituario,vIdTalhao,vIdProduto,vStatusRec,
-    vIdDetReceituario,vIdDetTalhaoReceituario:string;
+    vIdDetReceituario,vIdDetTalhaoReceituario,vDataRecomendacao:string;
     vCadOperacao:integer;
     procedure AbreReceituario(vFiltro:string);
     procedure myShowMenssagem(msg:string);
@@ -423,6 +423,7 @@ begin
   dmDB.vIdReceituario   :=vIdReceituario;
   dmDB.vNomeReceituario :=vNomeReceituario;
   dmDB.vStatusRec       :=vStatusRec;
+  dmDB.vDataRecomendacao:=vDataRecomendacao;
   Close;
  end;
 end;
@@ -622,7 +623,7 @@ begin
              txt.Text := 'Produto: ';
 
              txt      := TListItemText(Objects.FindDrawable('Text5'));
-             txt.Text := dmDb.TDetReceituarioproduto_1.AsString;
+             txt.Text := dmDb.TDetReceituarioProdutoNome.AsString;
 
              txt      := TListItemText(Objects.FindDrawable('Text6'));
              txt.Text := 'Area Prev.: ';
@@ -818,6 +819,11 @@ begin
    TAppearanceListViewItem(listaReceituarios.Selected).Objects.FindObjectT<TListItemText>
    ('Text3').Text;
   Obs := dmDB.RetornaObsReceituario(vIdReceituario);
+
+  vDataRecomendacao :=
+   TAppearanceListViewItem(listaReceituarios.Selected).Objects.FindObjectT<TListItemText>
+   ('Text5').Text;
+
   if obs.Length>1 then
   begin
     myShowMenssagem('Observação:'+Obs);

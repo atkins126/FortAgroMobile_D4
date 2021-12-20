@@ -260,6 +260,7 @@ begin
    Add('join usuario u on u.id=c.idresponsavel');
    Add('where c.status>-1');
    Add(Filtro);
+   Add('order by datareg desc');
    Open;
  end;
 end;

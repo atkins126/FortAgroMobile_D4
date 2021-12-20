@@ -119,7 +119,6 @@ type
     tbiSync: TTabItem;
     Layout11: TLayout;
     Rectangle12: TRectangle;
-    log: TMemo;
     Layout14: TLayout;
     Rectangle14: TRectangle;
     Label16: TLabel;
@@ -151,8 +150,6 @@ type
     Layout12: TLayout;
     lblAtiviadedesPendendes: TLabel;
     qryAux: TFDQuery;
-    imgSync: TImage;
-    Animacao: TFloatAnimation;
     imgOperador: TImage;
     imgTalhao: TImage;
     imgOcorrencia1: TImage;
@@ -246,6 +243,91 @@ type
     Layout16: TLayout;
     lblRevisoes: TLabel;
     imgFotos: TImage;
+    tbiForm: TTabItem;
+    layFrm: TLayout;
+    rtcMnu: TRectangle;
+    Layout20: TLayout;
+    layConfig: TLayout;
+    btnConfig: TRectangle;
+    Image20: TImage;
+    ShadowEffect7: TShadowEffect;
+    lblSync: TLabel;
+    btnSyncData: TRectangle;
+    Image22: TImage;
+    ShadowEffect2: TShadowEffect;
+    Label22: TLabel;
+    layMaquinas: TLayout;
+    btnAbastecimento: TRectangle;
+    Image23: TImage;
+    ShadowEffect5: TShadowEffect;
+    Label21: TLabel;
+    btnManutencao: TRectangle;
+    Image27: TImage;
+    ShadowEffect6: TShadowEffect;
+    Label23: TLabel;
+    layArmazem: TLayout;
+    btnEmbarque: TRectangle;
+    Image28: TImage;
+    ShadowEffect8: TShadowEffect;
+    Label24: TLabel;
+    btnDesembarque: TRectangle;
+    Image29: TImage;
+    ShadowEffect9: TShadowEffect;
+    Label25: TLabel;
+    layPul: TLayout;
+    btnReceituarios: TRectangle;
+    Image30: TImage;
+    ShadowEffect10: TShadowEffect;
+    Label26: TLabel;
+    btnPulverizacao: TRectangle;
+    Image31: TImage;
+    ShadowEffect11: TShadowEffect;
+    lblPulverização: TLabel;
+    layStandPluviometria: TLayout;
+    btnStandPlantas: TRectangle;
+    Image32: TImage;
+    ShadowEffect12: TShadowEffect;
+    Label27: TLabel;
+    btnPluviometria: TRectangle;
+    Image33: TImage;
+    ShadowEffect13: TShadowEffect;
+    Label28: TLabel;
+    layPlantioAplicacao: TLayout;
+    btnPlantio: TRectangle;
+    Image34: TImage;
+    ShadowEffect14: TShadowEffect;
+    lblPlantio: TLabel;
+    btnAplicacaoSolido: TRectangle;
+    Image35: TImage;
+    ShadowEffect15: TShadowEffect;
+    Label30: TLabel;
+    layColheitaMonitoramento: TLayout;
+    btnColheita: TRectangle;
+    Image36: TImage;
+    ShadowEffect16: TShadowEffect;
+    Label29: TLabel;
+    VertScrollMnu: TVertScrollBox;
+    layExtra: TLayout;
+    bntAtividadeExtra: TRectangle;
+    Image37: TImage;
+    ShadowEffect17: TShadowEffect;
+    Label31: TLabel;
+    btnMonitoramento: TRectangle;
+    Image38: TImage;
+    ShadowEffect18: TShadowEffect;
+    Label32: TLabel;
+    imgEditaArea: TImage;
+    imgReceituarioLista: TImage;
+    ImgVerde: TImage;
+    imgVermelho: TImage;
+    recLoading: TRectangle;
+    lblSyncData: TLabel;
+    imgSync: TImage;
+    Animacao: TFloatAnimation;
+    imgReplante: TImage;
+    Rectangle27: TRectangle;
+    Layout27: TLayout;
+    lblDesembarque: TLabel;
     procedure FormShow(Sender: TObject);
     procedure Image16Click(Sender: TObject);
     procedure btnEntrarClick(Sender: TObject);
@@ -254,7 +336,6 @@ type
     procedure btnConfirmarClick(Sender: TObject);
     procedure TreeConfigClick(Sender: TObject);
     procedure btnSyncClick(Sender: TObject);
-    procedure TreeExAuxiliaresClick(Sender: TObject);
     procedure btnVoltarSyncClick(Sender: TObject);
     procedure btnVoltarSync1Click(Sender: TObject);
     procedure btnVoltarConfigClick(Sender: TObject);
@@ -265,7 +346,6 @@ type
     procedure btnEnviaDadosClick(Sender: TObject);
     procedure TreeReceituarioClick(Sender: TObject);
     procedure TreeViewItem1Click(Sender: TObject);
-    procedure TreeQuadroAtividadesClick(Sender: TObject);
     procedure chkBaixaMaquinasClick(Sender: TObject);
     procedure chkBaixaTalhoesClick(Sender: TObject);
     procedure chkBaixaProdutosClick(Sender: TObject);
@@ -281,6 +361,25 @@ type
     procedure TreeMaquinasClick(Sender: TObject);
     procedure TreeManutencaoClick(Sender: TObject);
     procedure chkBaixaRevisoesClick(Sender: TObject);
+    procedure btnConfigMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Single);
+    procedure btnConfigMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Single);
+    procedure btnConfigClick(Sender: TObject);
+    procedure btnSyncDataClick(Sender: TObject);
+    procedure btnAbastecimentoClick(Sender: TObject);
+    procedure btnManutencaoClick(Sender: TObject);
+    procedure btnEmbarqueClick(Sender: TObject);
+    procedure btnPulverizacaoClick(Sender: TObject);
+    procedure btnReceituariosClick(Sender: TObject);
+    procedure btnStandPlantasClick(Sender: TObject);
+    procedure btnPluviometriaClick(Sender: TObject);
+    procedure btnMonitoramentoClick(Sender: TObject);
+    procedure btnPlantioClick(Sender: TObject);
+    procedure btnAplicacaoSolidoClick(Sender: TObject);
+    procedure btnColheitaClick(Sender: TObject);
+    procedure bntAtividadeExtraClick(Sender: TObject);
+    procedure btnDesembarqueClick(Sender: TObject);
   private
     procedure MudarAba(ATabItem: TTabItem; sender: TObject);
   public
@@ -304,13 +403,15 @@ type
     function  EnviaToken(msg:string):string;
     procedure ThreadEnd(Sender: TObject);
 
-
     procedure FormActivate(Sender: TObject);
     {$IFDEF ANDROID}
      procedure DoServiceConnectionChange(Sender: TObject; PushChanges: TPushService.TChanges);
     {$ENDIF}
     procedure FormCreate(Sender: TObject);
-    function AppEventProc(AAppEvent: TApplicationEvent; AContext: TObject): Boolean;
+    function  AppEventProc(AAppEvent: TApplicationEvent; AContext: TObject): Boolean;
+    procedure Abrir_Form(FormClass: TComponentClass);
+    procedure ResizeMnu;
+    procedure MostraMenu;
 
   end;
 
@@ -321,9 +422,10 @@ implementation
 
 {$R *.fmx}
 
-uses UDataContext, Umsg, UOperacoes, UReceituario, UDataSync, UCadReceituario,
+uses UDataContext, Umsg,UReceituario, UDataSync, UCadReceituario,
   UStandPlantas, UPluviometria, UAbastecimento, UDataUpdate,
-  UMonitoramentoPraga, UEmbarque, UContratos, URevisaoMaquinas;
+  UMonitoramentoPraga, UEmbarque, UContratos, URevisaoMaquinas, UPulverizacao,
+  UPlantio, UAplicacaoSolido, UColheita, UOperacoes, UDesembarque;
 
 
 procedure CancelarNotificacao(nome : string);
@@ -350,6 +452,115 @@ begin
   finally
     frmMsg.free;
   end;
+end;
+
+procedure TfrmPrincipal.bntAtividadeExtraClick(Sender: TObject);
+begin
+  if Not Assigned(frmOperacao) then
+   Application.CreateForm(TfrmOperacao,frmOperacao);
+  frmOperacao.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+  end);
+end;
+
+procedure TfrmPrincipal.btnAbastecimentoClick(Sender: TObject);
+begin
+  if Not Assigned(frmAbastecimento) then
+   Application.CreateForm(TfrmAbastecimento, frmAbastecimento);
+  frmAbastecimento.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    if ModalResult = mrOk then
+    begin
+     frmAbastecimento.DisposeOf;
+    end;
+  end);
+end;
+
+procedure TfrmPrincipal.btnAplicacaoSolidoClick(Sender: TObject);
+begin
+ if Not Assigned(frmAplicacaoSolido) then
+   Application.CreateForm(TfrmAplicacaoSolido,frmAplicacaoSolido);
+  frmAplicacaoSolido.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+  end);
+end;
+
+procedure TfrmPrincipal.btnManutencaoClick(Sender: TObject);
+begin
+ if Not Assigned(frmRevisaoMaquina) then
+   Application.CreateForm(TfrmRevisaoMaquina, frmRevisaoMaquina);
+  frmRevisaoMaquina.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    if ModalResult = mrOk then
+    begin
+     frmRevisaoMaquina.DisposeOf;
+    end;
+  end);
+end;
+
+procedure TfrmPrincipal.btnMonitoramentoClick(Sender: TObject);
+begin
+ if Not Assigned(frmMonitoramento) then
+   Application.CreateForm(TfrmMonitoramento, frmMonitoramento);
+  frmMonitoramento.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+  end);
+end;
+
+procedure TfrmPrincipal.btnPlantioClick(Sender: TObject);
+begin
+ if Not Assigned(frmPlantio) then
+   Application.CreateForm(TfrmPlantio,frmPlantio);
+  frmPlantio.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+  end);
+end;
+
+procedure TfrmPrincipal.btnPluviometriaClick(Sender: TObject);
+begin
+ if Not Assigned(frmPluviometria) then
+   Application.CreateForm(TfrmPluviometria, frmPluviometria);
+  frmPluviometria.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+  end);
+end;
+
+procedure TfrmPrincipal.btnPulverizacaoClick(Sender: TObject);
+begin
+ if Not Assigned(frmPulverizacao) then
+   Application.CreateForm(TfrmPulverizacao, frmPulverizacao);
+  dmDB.vOpPull :=1;
+  frmPulverizacao.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    if ModalResult = mrOk then
+    begin
+     frmAbastecimento.DisposeOf;
+    end;
+  end);
+end;
+
+procedure TfrmPrincipal.btnReceituariosClick(Sender: TObject);
+begin
+ if Not Assigned(frmCadReceituario) then
+   Application.CreateForm(TfrmCadReceituario, frmCadReceituario);
+  frmCadReceituario.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+  end);
+end;
+
+procedure TfrmPrincipal.ResizeMnu;
+var
+ vWidth:Double;
+begin
+ vWidth                 := (frmPrincipal.Width - 60)/2;
+ btnConfig.Width        :=vWidth;
+ btnSyncData.Width      :=vWidth;
+ btnManutencao.Width    :=vWidth;
+ btnAbastecimento.Width :=vWidth;
+ btnEmbarque.Width      :=vWidth;
+ btnDesembarque.Width   :=vWidth;
+ btnReceituarios.Width  :=vWidth;
+ btnPulverizacao.Width  :=vWidth;
 end;
 
 procedure TfrmPrincipal.ThreadEnd(Sender: TObject);
@@ -427,85 +638,6 @@ begin
 
 end;
 
-procedure TfrmPrincipal.TreeExAuxiliaresClick(Sender: TObject);
-begin
-  btnSync.Enabled := true;
-  if dmSync=nil then
-   dmSync := TdmSync.Create(Self);
-
-  laySelectUpdate.Visible := false;
-  chkBaixaMaquinas.Text   :='';
-  chkBaixaProdutos.Text   :='';
-  chkBaixaTalhoes.Text    :='';
-  if dmDB.vAgronomo='1' then
-  begin
-   dmSync.TSyncReceituario.Close;
-   dmSync.TSyncReceituario.Open;
-   RecReceituarioPendente.Visible := dmDB.vAgronomo='1';
-   lblRecPendente.Text := 'Receituarios Pendentes :'+
-   intToStr(dmSync.TSyncReceituario.RecordCount);
-  end;
-
-  laySyncRevisao.Visible     := dmDB.vRevisaoMaquinas=1;
-  laySyncReceituario.Visible := dmDB.vPulverizacao=1;
-
-  dmSync.qryOpSafraSync.Close;
-  dmSync.qryOpSafraSync.Open;
-  lblAtiviadedesPendendes.Text := 'Atividade Pendendes: '+
-   intToStr(dmSync.qryOpSafraSync.RecordCount);
-  vAtvPendente := intToStr(dmSync.qryOpSafraSync.RecordCount);
-
-  dmSync.TMonitoramentoPraga.Close;
-  dmSync.TMonitoramentoPraga.Open;
-  lblMonitoramentoPendente.Text := 'Monitoramento Pendente: '+
-   intToStr(dmSync.TMonitoramentoPraga.RecordCount);
-
-
-  dmSync.TSyncPluviometria.Close;
-  dmSync.TSyncPluviometria.Open;
-  lblPluviometriaPendente.Text := 'Pluviometria Pendente: '+
-   intToStr(dmSync.TSyncPluviometria.RecordCount);
-
-  dmSync.TSyncAbastecimento.Close;
-  dmSync.TSyncAbastecimento.Open;
-  lblAbastecimentoPendente.Text := 'Abastecimento Pendente: '+
-   intToStr(dmSync.TSyncAbastecimento.RecordCount);
-
-  dmSync.TMovLocalEstoque.Close;
-  dmSync.TMovLocalEstoque.Open;
-  lblMovEstoqueSync.Text := 'Movimentação Estoque: '+
-   intToStr(dmSync.TMovLocalEstoque.RecordCount);
-
-  dmSync.TPostRevisao.Close;
-  dmSync.TPostRevisao.Open;
-  lblRevisoes.Text := 'Revisoes: '+
-   intToStr(dmSync.TPostRevisao.RecordCount);
-
-  dmSync.Embarque.Close;
-  dmSync.Embarque.Open;
-  lblEmbarqueSync.Text := 'Embarques: '+
-   intToStr(dmSync.Embarque.RecordCount);
-
-  log.Lines.Clear;
-  dmDB.qryConfig.Close;
-  dmDB.qryConfig.Open;
-  if dmDB.qryConfigIP_SERVIDOR.AsString.Length=0 then
-  begin
-    myShowMenssagem('Informe o ip do servidor nas configurações');
-    Exit;
-  end
-  else
-    dmSync.Host := dmDB.qryConfigIP_SERVIDOR.AsString;
-  if dmDB.qryConfigPOTA_SERVIDOR.AsString.Length=0 then
-  begin
-    myShowMenssagem('Informe a porta do servidor nas configurações');
-    Exit;
-  end
-  else
-    dmSync.Porta := dmDB.qryConfigPOTA_SERVIDOR.AsString;
-  MudarAba(tbiSync,sender);
-end;
-
 procedure TfrmPrincipal.TreeManutencaoClick(Sender: TObject);
 begin
   frmRevisaoMaquina := TfrmRevisaoMaquina.Create(Self);
@@ -555,19 +687,6 @@ begin
   end;
 end;
 
-procedure TfrmPrincipal.TreeQuadroAtividadesClick(Sender: TObject);
-begin
-  frmOperacao := TfrmOperacao.Create(Self);
-  try
-    frmOperacao.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-    end);
-  finally
-    frmOperacao.free;
-  end;
-end;
-
 procedure TfrmPrincipal.TreeReceituarioClick(Sender: TObject);
 begin
  frmCadReceituario := TfrmCadReceituario.Create(Self);
@@ -596,6 +715,10 @@ end;
 
 
 
+procedure TfrmPrincipal.Abrir_Form(FormClass: TComponentClass);
+begin
+end;
+
 function TfrmPrincipal.AppEventProc(AAppEvent: TApplicationEvent;
   AContext: TObject): Boolean;
 begin
@@ -604,538 +727,392 @@ begin
 end;
 
 procedure TfrmPrincipal.btnBaixaSelectClick(Sender: TObject);
+var
+ etapa : string;
 begin
   if dmSync.TestaServidor<>'Erro' THEN
   begin
    Animacao.Start;
    T := TTask.Create(procedure
    begin
-    if vTipoDb='PECUARIA' then
-    begin
+    try
       TThread.Synchronize(TThread.CurrentThread, procedure
       begin
-       laySelectUpdate.Visible := false;
-       btnSync.Enabled         := true;
-       btnEnviaDados.Enabled   := true;
-       log.Lines.Add('Baixando Usuarios');
+       recLoading.Visible      := true;
       end);
-      etapa := 'Baixando Usuarios';
-      try
-       dmSync.GetUsuarios;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       laySelectUpdate.Visible := false;
-       btnSync.Enabled         := true;
-       btnEnviaDados.Enabled   := true;
-       log.Lines.Add('Baixando Atividade Abastecimento');
-      end);
-      etapa := 'Baixando Atividade Abastecimento';
-      try
-       dmSync.GetAtividadeAbastecimento;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Operador');
-      end);
-      etapa :='Baixando Operador';
-      try
-       dmSync.GetOperadorMaquina;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      if chkBaixaRevisoes.Text='X' then
-      begin
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Aux Itens Revisao');
-       end);
-       etapa :='Baixando Aux Itens Revisao';
-       try
-        dmSync.GetPlanoAuxItemRevisao;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Plano Revisao');
-       end);
-       etapa :='Baixando Plano Revisao';
-       try
-        dmSync.GetPlanoRevisao;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Plano Revisao Maquinas');
-       end);
-       try
-        dmSync.GetPlanoRevisaoMaquinas;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-       etapa :='Baixando Plano Revisao Maquinas';
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Plano Itens');
-       end);
-       etapa :='Baixando Plano Itens';
-       try
-         dmSync.GetPlanoRevisaoItens;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Revisao');
-       end);
-       etapa :='Baixando Revisao';
-       try
-         dmSync.GetRevisao;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-      end;
-
-      if chkBaixaMaquinas.Text='X' then
+      if vTipoDb='PECUARIA' then
       begin
         TThread.Synchronize(TThread.CurrentThread, procedure
         begin
-         log.Lines.Add('Baixando Maquinas');
+         laySelectUpdate.Visible := false;
+         btnSync.Enabled         := true;
+         btnEnviaDados.Enabled   := true;
+         lblSyncData.Text :=('Baixando Usuarios');
         end);
-        etapa :='Baixando Maquinas';
-        try
-         dmSync.GetMaquinas;
-        except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-        end;
-      end;
-      sleep(500);
+        etapa := 'Baixando Usuarios';
+        dmSync.GetUsuarios;
 
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Local Estoque');
-      end);
-      etapa :='Baixando Local Estoque';
-      try
-        dmSync.GetLocalEstoque;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-      sleep(500);
-      if chkBaixaProdutos.Text='X' then
-      begin
-       TThread.Synchronize(TThread.CurrentThread, procedure
+        TThread.Synchronize(TThread.CurrentThread, procedure
         begin
-         log.Lines.Add('Baixando Produtos');
+         laySelectUpdate.Visible := false;
+         btnSync.Enabled         := true;
+         btnEnviaDados.Enabled   := true;
+         lblSyncData.Text :=('Baixando Atividade Abastecimento');
         end);
-        etapa :='Baixando Produtos';
-        try
-         dmSync.GetProdutos;
-        except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-        end;
-      end;
-      sleep(500);
-    end //pecuaria
-    else
-    begin
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       laySelectUpdate.Visible := false;
-       btnSync.Enabled         := true;
-       btnEnviaDados.Enabled   := true;
-       log.Lines.Add('Baixando Usuarios');
-      end);
-      etapa :='Baixando Usuarios';
-      try
-       dmSync.GetUsuarios;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Pragas');
-      end);
-      etapa :='Baixando Pragas';
-      try
-       dmSync.GetAuxPragas;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Operador');
-      end);
-      etapa :='Baixando Operador';
-      try
-       dmSync.GetOperadorMaquina;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Coberturas');
-      end);
-      etapa :='Baixando Coberturas';
-      try
-       dmSync.GetCoberturas;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      if chkBaixaRevisoes.Text='X' then
-      begin
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Aux Itens Revisao');
-       end);
-       etapa :='Baixando Aux Itens Revisao';
-       try
-         dmSync.GetPlanoAuxItemRevisao;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-       sleep(500);
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Plano Revisao');
-       end);
-       etapa :='Baixando Plano Revisao';
-       try
-        dmSync.GetPlanoRevisao;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-       sleep(500);
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Plano Revisao Maquinas');
-       end);
-       etapa :='Baixando Plano Revisao Maquinas';
-       try
-         dmSync.GetPlanoRevisaoMaquinas;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-       sleep(500);
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Plano Itens');
-       end);
-       etapa :='Baixando Plano Itens';
-       try
-        dmSync.GetPlanoRevisaoItens;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-       sleep(500);
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Revisao');
-       end);
-       etapa :='Baixando Revisao';
-       try
-         dmSync.GetRevisao;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-      end;
-      sleep(500);
-      if dmDB.vAbastecimento=1 then
-      begin
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        laySelectUpdate.Visible := false;
-        btnSync.Enabled         := true;
-        btnEnviaDados.Enabled   := true;
-        log.Lines.Add('Baixando Atividade Abastecimento');
-       end);
-       etapa :='Baixando Atividade Abastecimento';
-       try
+        etapa := 'Baixando Atividade Abastecimento';
         dmSync.GetAtividadeAbastecimento;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-      end;
-      sleep(500);
-      if chkBaixaMaquinas.Text='X' then
-      begin
-        TThread.Synchronize(TThread.CurrentThread, procedure
-        begin
-         log.Lines.Add('Baixando Maquinas');
-        end);
-        etapa :='Baixando Maquinas';
-        try
-         dmSync.GetMaquinas;
-        except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-        end;
-      end;
-      sleep(500);
-      if chkBaixaProdutos.Text='X' then
-      begin
-        TThread.Synchronize(TThread.CurrentThread, procedure
-        begin
-         log.Lines.Add('Baixando Produtos');
-        end);
-        etapa :='Baixando Produtos';
-        try
-         dmSync.GetProdutos;
-        except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-        end;
-      end;
-      sleep(500);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Operações');
-      end);
-      etapa :='Baixando Operações';
-      try
-       dmSync.GetOperacoes;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      if chkBaixaTalhoes.Text='X' then
-      begin
-        TThread.Synchronize(TThread.CurrentThread, procedure
-        begin
-         log.Lines.Add('Baixando Areas Fazenda');
-        end);
-        etapa :='Baixando Areas Fazenda';
-        try
-         dmSync.GetAreas;
-        except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-        end;
-        sleep(500);
-        TThread.Synchronize(TThread.CurrentThread, procedure
-        begin
-         log.Lines.Add('Baixando Setores Fazenda');
-        end);
-        etapa :='Baixando Setores Fazenda';
-        try
-         dmSync.GetSetor;
-        except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-        end;
-        sleep(500);
-        TThread.Synchronize(TThread.CurrentThread, procedure
-        begin
-         log.Lines.Add('Baixando Talhoes');
-        end);
-        etapa :='Baixando Talhoes';
-        try
-         dmSync.GetTalhoes;
-        except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-        end;
-        sleep(500);
-      end;
 
-      if dmDB.vPluviometria=1 then
-      begin
         TThread.Synchronize(TThread.CurrentThread, procedure
         begin
-         log.Lines.Add('Baixando Pluviometros');
+         lblSyncData.Text :=('Baixando Operador');
         end);
-        etapa :='Baixando Pluviometros';
-        try
-         log.Lines.Add(dmSync.GetPluviometros);
-        except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-        end;
-        sleep(500);
-        TThread.Synchronize(TThread.CurrentThread, procedure
-        begin
-         log.Lines.Add('Baixando Pluviometros Talhoes');
-        end);
-        etapa :='Baixando Pluviometros Talhoes';
-        try
-         dmSync.GetPluviometroTalhoes;
-        except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-        end;
-        sleep(500);
-      end;
+        etapa :='Baixando Operador';
+        dmSync.GetOperadorMaquina;
 
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Local Estoque');
-      end);
-      etapa :='Baixando Local Estoque';
-      try
-       dmSync.GetLocalEstoque;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Safra');
-      end);
-      etapa :='Baixando Safra';
-      try
-       dmSync.GetSafra;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Culturas');
-      end);
-      etapa :='Baixando Culturas';
-      try
-       dmSync.GetCulturas;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Variedades');
-      end);
-      etapa :='Baixando Variedades';
-      try
-       dmSync.GetCultivares;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Tipo Ocorrencia');
-      end);
-      etapa :='Baixando Tipo Ocorrencia';
-      try
-       dmSync.GetTipoOcorrencia;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Baixando Tipo Aplicacao Solido');
-      end);
-      etapa :='Baixando Tipo Aplicacao Solido';
-      try
-       dmSync.GetTipoAplicacaoSolido;
-      except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-      end;
-      sleep(500);
-      if dmDB.vArmazem=1 then
-      begin
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Compradores');
-       end);
-       etapa :='Baixando Compradores';
-       try
-        dmSync.GetComprador;
-       except
-       on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-       sleep(500);
-       TThread.Synchronize(TThread.CurrentThread, procedure
-       begin
-        log.Lines.Add('Baixando Contratos');
-       end);
-       etapa :='Baixando Contratos';
-       try
-         dmSync.GetContratos;
-       except
-        on E : Exception do
-          log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-       end;
-       sleep(500);
-      end;
-      if chkBaixaReceituario.Text='X' then
-      begin
+        if chkBaixaRevisoes.Text='X' then
+        begin
          TThread.Synchronize(TThread.CurrentThread, procedure
          begin
-          log.Lines.Add('Baixando Receituario');
+          lblSyncData.Text :=('Baixando Aux Itens Revisao');
          end);
-         etapa :='Baixando Receituario';
-         try
-          dmSync.GetReceituario;
-         except
-          on E : Exception do
-            log.Lines.Add('Erro ao Sincronizar '+etapa+': '+E.Message);
-         end;
-         sleep(500);
-      end;
-    end;
-    TThread.Synchronize(TThread.CurrentThread, procedure
-    begin
-      MessageDlg('Dados Baixados com Sucesso, sistema deve ser reiniciado',
-      System.UITypes.TMsgDlgType.mtInformation,
-      [System.UITypes.TMsgDlgBtn.mbYes], 0,
-      procedure(const AResult: System.UITypes.TModalResult)
-      begin
-       case AResult of
-        mrYES:
-        begin
-         Application.Terminate;
+         etapa :='Baixando Aux Itens Revisao';
+         dmSync.GetPlanoAuxItemRevisao;
+
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Plano Revisao');
+         end);
+         etapa :='Baixando Plano Revisao';
+         dmSync.GetPlanoRevisao;
+
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Plano Revisao Maquinas');
+         end);
+         dmSync.GetPlanoRevisaoMaquinas;
+
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Plano Itens');
+         end);
+         etapa :='Baixando Plano Itens';
+         dmSync.GetPlanoRevisaoItens;
+
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Revisao');
+         end);
+         etapa :='Baixando Revisao';
+         dmSync.GetRevisao;
         end;
-       end;
+
+        if chkBaixaMaquinas.Text='X' then
+        begin
+          TThread.Synchronize(TThread.CurrentThread, procedure
+          begin
+           lblSyncData.Text :=('Baixando Maquinas');
+          end);
+          etapa :='Baixando Maquinas';
+          dmSync.GetMaquinas;
+        end;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Local Estoque');
+        end);
+        etapa :='Baixando Local Estoque';
+        dmSync.GetLocalEstoque;
+
+        if chkBaixaProdutos.Text='X' then
+        begin
+         TThread.Synchronize(TThread.CurrentThread, procedure
+          begin
+           lblSyncData.Text :=('Baixando Produtos');
+          end);
+          etapa :='Baixando Produtos';
+          dmSync.GetProdutos;
+        end;
+      end //pecuaria
+      else
+      begin
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         laySelectUpdate.Visible := false;
+         btnSync.Enabled         := true;
+         btnEnviaDados.Enabled   := true;
+         lblSyncData.Text :=('Baixando Usuarios');
+        end);
+        etapa :='Baixando Usuarios';
+        dmSync.GetUsuarios;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Pragas');
+        end);
+        etapa :='Baixando Pragas';
+        dmSync.GetAuxPragas;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Operador');
+        end);
+        etapa :='Baixando Operador';
+        dmSync.GetOperadorMaquina;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Coberturas');
+        end);
+        etapa :='Baixando Coberturas';
+        dmSync.GetCoberturas;
+
+        if chkBaixaRevisoes.Text='X' then
+        begin
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Aux Itens Revisao');
+         end);
+         etapa :='Baixando Aux Itens Revisao';
+         dmSync.GetPlanoAuxItemRevisao;
+
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Plano Revisao');
+         end);
+         etapa :='Baixando Plano Revisao';
+         dmSync.GetPlanoRevisao;
+
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Plano Revisao Maquinas');
+         end);
+         etapa :='Baixando Plano Revisao Maquinas';
+         dmSync.GetPlanoRevisaoMaquinas;
+
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Plano Itens');
+         end);
+         etapa :='Baixando Plano Itens';
+         dmSync.GetPlanoRevisaoItens;
+
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Revisao');
+         end);
+         etapa :='Baixando Revisao';
+         dmSync.GetRevisao;
+        end;
+
+        if dmDB.vAbastecimento=1 then
+        begin
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          laySelectUpdate.Visible := false;
+          btnSync.Enabled         := true;
+          btnEnviaDados.Enabled   := true;
+          lblSyncData.Text :=('Baixando Atividade Abastecimento');
+         end);
+         etapa :='Baixando Atividade Abastecimento';
+         dmSync.GetAtividadeAbastecimento;
+        end;
+
+        if chkBaixaMaquinas.Text='X' then
+        begin
+          TThread.Synchronize(TThread.CurrentThread, procedure
+          begin
+           lblSyncData.Text :=('Baixando Maquinas');
+          end);
+          etapa :='Baixando Maquinas';
+          dmSync.GetMaquinas;
+        end;
+        if chkBaixaProdutos.Text='X' then
+        begin
+          TThread.Synchronize(TThread.CurrentThread, procedure
+          begin
+           lblSyncData.Text :=('Baixando Produtos');
+          end);
+          etapa :='Baixando Produtos';
+          dmSync.GetProdutos;
+        end;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Operações');
+        end);
+        etapa :='Baixando Operações';
+        dmSync.GetOperacoes;
+
+        if chkBaixaTalhoes.Text='X' then
+        begin
+          TThread.Synchronize(TThread.CurrentThread, procedure
+          begin
+           lblSyncData.Text :=('Baixando Areas Fazenda');
+          end);
+          etapa :='Baixando Areas Fazenda';
+          dmSync.GetAreas;
+
+          TThread.Synchronize(TThread.CurrentThread, procedure
+          begin
+           lblSyncData.Text :=('Baixando Setores Fazenda');
+          end);
+          etapa :='Baixando Setores Fazenda';
+          dmSync.GetSetor;
+
+          TThread.Synchronize(TThread.CurrentThread, procedure
+          begin
+           lblSyncData.Text :=('Baixando Talhoes');
+          end);
+          etapa :='Baixando Talhoes';
+          dmSync.GetTalhoes;
+        end;
+
+        if dmDB.vPluviometria=1 then
+        begin
+          TThread.Synchronize(TThread.CurrentThread, procedure
+          begin
+           lblSyncData.Text :=('Baixando Pluviometros');
+          end);
+          etapa :='Baixando Pluviometros';
+          dmSync.GetPluviometros;
+
+          TThread.Synchronize(TThread.CurrentThread, procedure
+          begin
+           lblSyncData.Text :=('Baixando Pluviometros Talhoes');
+          end);
+          etapa :='Baixando Pluviometros Talhoes';
+          dmSync.GetPluviometroTalhoes;
+        end;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Local Estoque');
+        end);
+        etapa :='Baixando Local Estoque';
+        dmSync.GetLocalEstoque;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Safra');
+        end);
+        etapa :='Baixando Safra';
+        dmSync.GetSafra;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Culturas');
+        end);
+        etapa :='Baixando Culturas';
+        dmSync.GetCulturas;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Variedades');
+        end);
+        etapa :='Baixando Variedades';
+        dmSync.GetCultivares;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Tipo Ocorrencia');
+        end);
+        etapa :='Baixando Tipo Ocorrencia';
+        dmSync.GetTipoOcorrencia;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Baixando Tipo Aplicacao Solido');
+        end);
+        etapa :='Baixando Tipo Aplicacao Solido';
+        dmSync.GetTipoAplicacaoSolido;
+
+        if dmDB.vArmazem=1 then
+        begin
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Compradores');
+         end);
+         etapa :='Baixando Compradores';
+         dmSync.GetComprador;
+
+         TThread.Synchronize(TThread.CurrentThread, procedure
+         begin
+          lblSyncData.Text :=('Baixando Contratos');
+         end);
+         etapa :='Baixando Contratos';
+         dmSync.GetContratos;
+        end;
+
+        if chkBaixaReceituario.Text='X' then
+        begin
+           TThread.Synchronize(TThread.CurrentThread, procedure
+           begin
+            lblSyncData.Text :=('Baixando Receituario');
+           end);
+           etapa :='Baixando Receituario';
+           dmSync.GetReceituario;
+        end;
+      end;
+      TThread.Synchronize(TThread.CurrentThread, procedure
+      begin
+        MessageDlg('Dados Baixados com Sucesso, sistema deve ser reiniciado',
+        System.UITypes.TMsgDlgType.mtInformation,
+        [System.UITypes.TMsgDlgBtn.mbYes], 0,
+        procedure(const AResult: System.UITypes.TModalResult)
+        begin
+         case AResult of
+          mrYES:
+          begin
+           Application.Terminate;
+          end;
+         end;
+        end);
       end);
-    end);
+    except
+     on E : Exception do
+     TThread.Synchronize(TThread.CurrentThread, procedure
+     begin
+      ShowMessage('Erro ao Sincronizar '+etapa+': '+E.Message);
+     end);
+    end;
    end);
    t.Start;
   end
   else
   begin
-    myShowMenssagem('Erro ao se conectar com servidor!');
+    ShowMessage('Erro ao se conectar com servidor!');
     Animacao.Stop;
   end;
+end;
+
+procedure TfrmPrincipal.btnColheitaClick(Sender: TObject);
+begin
+ if Not Assigned(frmColheita) then
+   Application.CreateForm(TfrmColheita,frmColheita);
+  frmColheita.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+  end);
+end;
+
+procedure TfrmPrincipal.btnConfigClick(Sender: TObject);
+begin
+  dmDB.qryConfig.Close;
+  dmDB.qryConfig.Open;
+  edtIPServidor.Text    := dmDB.qryConfigIP_SERVIDOR.AsString;
+  edtPortaServidor.Text := dmDB.qryConfigPOTA_SERVIDOR.AsString;
+  MudarAba(tbiConfig,sender);
+end;
+
+procedure TfrmPrincipal.btnConfigMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+begin
+ (Sender as TRectangle).Stroke.Color :=TAlphaColorRec.Blue;
+end;
+
+procedure TfrmPrincipal.btnConfigMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Single);
+begin
+ (Sender as TRectangle).Stroke.Color :=TAlphaColorRec.White;
 end;
 
 procedure TfrmPrincipal.btnConfigSync1Click(Sender: TObject);
@@ -1194,6 +1171,28 @@ if edtIPServidor.Text.IsEmpty then
     MudarAba(tbiMenu,Sender);
 end;
 
+procedure TfrmPrincipal.btnDesembarqueClick(Sender: TObject);
+begin
+ if Not Assigned(frmDesembarque) then
+   Application.CreateForm(TfrmDesembarque, frmDesembarque);
+  frmDesembarque.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+  end);
+end;
+
+procedure TfrmPrincipal.btnEmbarqueClick(Sender: TObject);
+begin
+ if Not Assigned(frmEmbarque) then
+   Application.CreateForm(TfrmEmbarque, frmEmbarque);
+  frmEmbarque.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    if ModalResult = mrOk then
+    begin
+     frmEmbarque.DisposeOf;
+    end;
+  end);
+end;
+
 procedure TfrmPrincipal.btnEntrarClick(Sender: TObject);
 begin
  if edtUsuario.Text.IsEmpty  then
@@ -1218,6 +1217,8 @@ begin
     dmdb.qryConfigSalvarLogin.AsInteger :=1;
     dmdb.qryConfig.ApplyUpdates(-1);
   end;
+  dmUpdate.CreateTablesVersao('');
+  MostraMenu;
   laymnu.Opacity :=0;
   MudarAba(tbiMenu,sender);
   AnimacaoMnu.Start;
@@ -1236,11 +1237,104 @@ begin
  MudarAba(tbiMenu,sender);
 end;
 
+procedure TfrmPrincipal.btnStandPlantasClick(Sender: TObject);
+begin
+if Not Assigned(frmStandPlantas) then
+   Application.CreateForm(TfrmStandPlantas, frmStandPlantas);
+  frmStandPlantas.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+  end);
+end;
+
 procedure TfrmPrincipal.btnSyncClick(Sender: TObject);
 begin
   laySelectUpdate.Visible := true;
   btnSync.Enabled         := false;
   btnEnviaDados.Enabled   := false;
+end;
+
+procedure TfrmPrincipal.btnSyncDataClick(Sender: TObject);
+begin
+  recLoading.Visible := false;
+  btnSync.Enabled    := true;
+  if dmSync=nil then
+   dmSync := TdmSync.Create(Self);
+
+  laySelectUpdate.Visible := false;
+  chkBaixaMaquinas.Text   :='';
+  chkBaixaProdutos.Text   :='';
+  chkBaixaTalhoes.Text    :='';
+  if dmDB.vAgronomo='1' then
+  begin
+   dmSync.TSyncReceituario.Close;
+   dmSync.TSyncReceituario.Open;
+   RecReceituarioPendente.Visible := dmDB.vAgronomo='1';
+   lblRecPendente.Text := 'Receituarios Pendentes :'+
+   intToStr(dmSync.TSyncReceituario.RecordCount);
+  end;
+
+  laySyncRevisao.Visible     := dmDB.vRevisaoMaquinas=1;
+  laySyncReceituario.Visible := dmDB.vPulverizacao=1;
+
+  dmSync.qryOpSafraSync.Close;
+  dmSync.qryOpSafraSync.Open;
+  lblAtiviadedesPendendes.Text := 'Atividade Pendendes: '+
+   intToStr(dmSync.qryOpSafraSync.RecordCount);
+  vAtvPendente := intToStr(dmSync.qryOpSafraSync.RecordCount);
+
+  dmSync.TMonitoramentoPraga.Close;
+  dmSync.TMonitoramentoPraga.Open;
+  lblMonitoramentoPendente.Text := 'Monitoramento Pendente: '+
+   intToStr(dmSync.TMonitoramentoPraga.RecordCount);
+
+
+  dmSync.TSyncPluviometria.Close;
+  dmSync.TSyncPluviometria.Open;
+  lblPluviometriaPendente.Text := 'Pluviometria Pendente: '+
+   intToStr(dmSync.TSyncPluviometria.RecordCount);
+
+  dmSync.TSyncAbastecimento.Close;
+  dmSync.TSyncAbastecimento.Open;
+  lblAbastecimentoPendente.Text := 'Abastecimento Pendente: '+
+   intToStr(dmSync.TSyncAbastecimento.RecordCount);
+
+  dmSync.TMovLocalEstoque.Close;
+  dmSync.TMovLocalEstoque.Open;
+  lblMovEstoqueSync.Text := 'Movimentação Estoque: '+
+   intToStr(dmSync.TMovLocalEstoque.RecordCount);
+
+  dmSync.TPostRevisao.Close;
+  dmSync.TPostRevisao.Open;
+  lblRevisoes.Text := 'Revisoes: '+
+   intToStr(dmSync.TPostRevisao.RecordCount);
+
+  dmSync.Embarque.Close;
+  dmSync.Embarque.Open;
+  lblEmbarqueSync.Text := 'Embarques: '+
+   intToStr(dmSync.Embarque.RecordCount);
+
+  dmSync.Desembarques.Close;
+  dmSync.Desembarques.Open;
+  lblDesembarque.Text := 'Desembarque: '+
+   intToStr(dmSync.Desembarques.RecordCount);
+
+  dmDB.qryConfig.Close;
+  dmDB.qryConfig.Open;
+  if dmDB.qryConfigIP_SERVIDOR.AsString.Length=0 then
+  begin
+    myShowMenssagem('Informe o ip do servidor nas configurações');
+    Exit;
+  end
+  else
+    dmSync.Host := dmDB.qryConfigIP_SERVIDOR.AsString;
+  if dmDB.qryConfigPOTA_SERVIDOR.AsString.Length=0 then
+  begin
+    myShowMenssagem('Informe a porta do servidor nas configurações');
+    Exit;
+  end
+  else
+    dmSync.Porta := dmDB.qryConfigPOTA_SERVIDOR.AsString;
+  MudarAba(tbiSync,sender);
 end;
 
 procedure TfrmPrincipal.FormActivate(Sender: TObject);
@@ -1296,12 +1390,7 @@ begin
 end;
 
 procedure TfrmPrincipal.FormShow(Sender: TObject);
-var
-    AppEvent : IFMXApplicationEventService;
 begin
-  if TPlatformServices.Current.SupportsPlatformService(IFMXApplicationEventService, IInterface(AppEvent)) then
-      AppEvent.SetApplicationEventHandler(AppEventProc);
-
   if dmSync= nil then
    dmSync := TdmSync.Create(Self);
 
@@ -1312,7 +1401,6 @@ begin
   tbPrincipal.TabPosition       := TTabPosition.None;
   tbPrincipal.ActiveTab         := tbiLogin;
   edtUsuario.SetFocus;
-  Animation.Start;
   layMnuPrincipal.Opacity       :=0;
   lblVersao.Text                := GetVersaoArq;
   lblVersao2.Text               := GetVersaoArq;
@@ -1322,21 +1410,18 @@ begin
   lblTipoDB.Text := dmDB.qryConfigTipoDB.Asstring;
   vTipoDb        := dmDB.qryConfigTipoDB.Asstring;
 
-  TreeExAgricultura.Visible  := dmDB.qryConfigTIPODB.AsString='AGRICULTURA';
-  TreeArmazem.Visible        := dmDB.qryConfigTIPODB.AsString='AGRICULTURA';
-  laySyncTalhoes.Visible     := dmDB.qryConfigTIPODB.AsString='AGRICULTURA';
-  laySyncReceituario.Visible := dmDB.qryConfigTIPODB.AsString='AGRICULTURA';
-
-  if dmDB.qryConfigTIPODB.AsString='PECUARIA' then
-  begin
-   TreeMaquinas.IsExpanded := true;
-  end;
+  layArmazem.Visible               := dmDB.qryConfigTIPODB.AsString='AGRICULTURA';
+  layPul.Visible                   := dmDB.qryConfigTIPODB.AsString='AGRICULTURA';
+  layStandPluviometria.Visible     := dmDB.qryConfigTIPODB.AsString='AGRICULTURA';
+  layPlantioAplicacao.Visible      := dmDB.qryConfigTIPODB.AsString='AGRICULTURA';
+  layColheitaMonitoramento.Visible := dmDB.qryConfigTIPODB.AsString='AGRICULTURA';
 
   if dmDB.qryConfigSalvarLogin.AsInteger=1 then
     chkSalvaSenha.IsChecked := true
   else
     chkSalvaSenha.IsChecked := false;
   tbPrincipal.TabPosition   := TTabPosition.None;
+
   if dmDB.VerificaTabelaVazia('usuario') then
    begin
      vPrimeiroAcesso        := true;
@@ -1357,7 +1442,7 @@ end;
 
 function TfrmPrincipal.GetVersaoArq: string;
 begin
-  Result := 'v2021-11-02';
+  Result := 'v2021-12-05';
 end;
 
 procedure TfrmPrincipal.Image16Click(Sender: TObject);
@@ -1393,166 +1478,196 @@ procedure TfrmPrincipal.btnEnviaDadosClick(Sender: TObject);
 begin
   if dmSync.TestaServidor<>'Erro' THEN
   begin
-   dmSync.PostToken;
-   Animacao.Start;
-   TThread.CreateAnonymousThread(procedure
+   T := TTask.Create(procedure
    begin
-    if frmPrincipal.vTipoDb='PECUARIA' then
-    begin
+    try
       TThread.Synchronize(TThread.CurrentThread, procedure
       begin
-       log.Lines.Add('Enviando Abastecimentos');
+       recLoading.Visible      := true;
       end);
-      log.Lines.Add(dmSync.PostAbastecimento);
-
       TThread.Synchronize(TThread.CurrentThread, procedure
       begin
-       log.Lines.Add('Enviando Abastecimentos Outros');
+        laySelectUpdate.Visible := false;
+        btnSync.Enabled         := true;
+        btnEnviaDados.Enabled   := true;
       end);
-      log.Lines.Add(dmSync.PostAbastecimentoOutros);
-
-      TThread.Synchronize(TThread.CurrentThread, procedure
+      if frmPrincipal.vTipoDb='PECUARIA' then
       begin
-       log.Lines.Add('Enviando Movimentação estoque');
-      end);
-
-      log.Lines.Add(dmSync.PostMovLocalEstoque);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Aux Item Revisao');
-      end);
-
-      log.Lines.Add(dmSync.PostItemRevisao);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Revisao');
-      end);
-      log.Lines.Add(dmSync.PostRevisao);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Revisao Item');
-      end);
-      log.Lines.Add(dmSync.PostRevisaoItens);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Revisao Servicos');
-      end);
-      log.Lines.Add(dmSync.PostRevisaoServico);
-    end//pecuaria
-    else
-    begin
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Receituario');
-      end);
-      log.Lines.Add(dmSync.PostReceituario);
-
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Operaçoes');
-      end);
-      dmSync.PostOperacaoSafraAplSolidos;
-
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Stand Plantas');
-      end);
-      log.Lines.Add(dmSync.PostStandPlantas);
-
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Pluviometria');
-      end);
-      log.Lines.Add(dmSync.PostPluviometria);
-
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Abastecimentos');
-      end);
-      log.Lines.Add(dmSync.PostAbastecimento);
-
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Abastecimentos Outros');
-      end);
-      log.Lines.Add(dmSync.PostAbastecimentoOutros);
-
-      log.Lines.Add(dmSync.PostMovLocalEstoque);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Aux Item Revisao');
-      end);
-
-      log.Lines.Add(dmSync.PostItemRevisao);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Revisao');
-      end);
-      log.Lines.Add(dmSync.PostRevisao);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Revisao Item');
-      end);
-      log.Lines.Add(dmSync.PostRevisaoItens);
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Revisao Servicos');
-      end);
-      log.Lines.Add(dmSync.PostRevisaoServico);
-
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Movimentação estoque');
-      end);
-      log.Lines.Add(dmSync.PostMovLocalEstoque);
-
-
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Monitoramento');
-      end);
-      log.Lines.Add(dmSync.PostMonitoramento);
-
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-       log.Lines.Add('Enviando Embarques');
-      end);
-      log.Lines.Add(dmSync.PostEmbarques);
-      log.Lines.Add(dmSync.GetContratos);
-
-      TThread.Synchronize(TThread.CurrentThread, procedure
-      begin
-        if dmDB.vAgronomo='1' then
+        TThread.Synchronize(TThread.CurrentThread, procedure
         begin
-         RecReceituarioPendente.Visible := dmDB.vAgronomo='1';
-         dmSync.TSyncReceituario.Close;
-         dmSync.TSyncReceituario.Open();
-         lblRecPendente.Text := 'Receituarios Pendentes :'+
-         intToStr(dmSync.TSyncReceituario.RecordCount);
-        end;
-      end);
-    end;//Agricultura
-    TThread.Synchronize(TThread.CurrentThread, procedure
-    begin
-      MessageDlg('Dados Enviados com Sucesso, sistema deve ser reiniciado',
-      System.UITypes.TMsgDlgType.mtInformation,
-      [System.UITypes.TMsgDlgBtn.mbYes], 0,
-      procedure(const AResult: System.UITypes.TModalResult)
-      begin
-       case AResult of
-        mrYES:
+         lblSyncData.Text :=('Enviando Abastecimentos');
+        end);
+        (dmSync.PostAbastecimento);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
         begin
-         Application.Terminate;
-        end;
-       end;
+         lblSyncData.Text :=('Enviando Abastecimentos Outros');
+        end);
+        (dmSync.PostAbastecimentoOutros);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Movimentação estoque');
+        end);
+        (dmSync.PostMovLocalEstoque);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Aux Item Revisao');
+        end);
+        (dmSync.PostItemRevisao);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Revisao');
+        end);
+        (dmSync.PostRevisao);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Revisao Item');
+        end);
+        (dmSync.PostRevisaoItens);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Revisao Servicos');
+        end);
+        (dmSync.PostRevisaoServico);
+      end//pecuaria
+      else
+      begin
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Receituario');
+        end);
+        (dmSync.PostReceituario);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Operaçoes');
+        end);
+        dmSync.PostOperacaoSafraAplSolidos;
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Stand Plantas');
+        end);
+        (dmSync.PostStandPlantas);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Pluviometria');
+        end);
+        (dmSync.PostPluviometria);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Abastecimentos');
+        end);
+        (dmSync.PostAbastecimento);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Abastecimentos Outros');
+        end);
+        (dmSync.PostAbastecimentoOutros);
+
+        lblSyncData.Text :=(dmSync.PostMovLocalEstoque);
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Aux Item Revisao');
+        end);
+        lblSyncData.Text :=(dmSync.PostItemRevisao);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Revisao');
+        end);
+        (dmSync.PostRevisao);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Revisao Item');
+        end);
+        (dmSync.PostRevisaoItens);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Revisao Servicos');
+        end);
+        (dmSync.PostRevisaoServico);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Movimentação estoque');
+        end);
+        (dmSync.PostMovLocalEstoque);
+
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Monitoramento');
+        end);
+        (dmSync.PostMonitoramento);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Embarques');
+        end);
+        (dmSync.PostEmbarques);
+        if dmDB.vArmazem=1 then
+         (dmSync.GetContratos);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+         lblSyncData.Text :=('Enviando Desembarques');
+        end);
+        (dmSync.PostDesembarques);
+
+        TThread.Synchronize(TThread.CurrentThread, procedure
+        begin
+          if dmDB.vAgronomo='1' then
+          begin
+           RecReceituarioPendente.Visible := dmDB.vAgronomo='1';
+           dmSync.TSyncReceituario.Close;
+           dmSync.TSyncReceituario.Open();
+           lblRecPendente.Text := 'Receituarios Pendentes :'+
+           intToStr(dmSync.TSyncReceituario.RecordCount);
+          end;
+        end);
+      end;//Agricultura
+      TThread.Synchronize(TThread.CurrentThread, procedure
+      begin
+        MessageDlg('Dados Enviados com Sucesso, sistema deve ser reiniciado',
+        System.UITypes.TMsgDlgType.mtInformation,
+        [System.UITypes.TMsgDlgBtn.mbYes], 0,
+        procedure(const AResult: System.UITypes.TModalResult)
+        begin
+         case AResult of
+          mrYES:
+          begin
+           Application.Terminate;
+          end;
+         end;
+        end);
       end);
-    end);
-   end).Start;
+    except
+    on E : Exception do
+     begin
+      TThread.Synchronize(TThread.CurrentThread, procedure
+      begin
+        recLoading.Visible := false;
+        ShowMessage('Erro na etapa:'+etapa+' '+E.Message);
+      end);
+     end;
+    end;
+   end);
+   t.Start;
   end
   else
   begin
-    myShowMenssagem('Erro ao se conectar com servidor!');
-    Animacao.Stop;
+    ShowMessage('Erro ao se conectar com servidor!');
   end;
 end;
 
@@ -1616,6 +1731,72 @@ begin
   layMnu.Opacity:=0
  else
   AnimacaoMnu.Start;
+end;
+
+procedure TfrmPrincipal.MostraMenu;
+begin
+ if vTipoDb='AGRICULTURA' then
+  begin
+    //MAQUINAS E ABASTECIMENTO
+    if(dmDB.vRevisaoMaquinas=1) or
+      (dmDB.vAbastecimento=1) then
+    begin
+     layMaquinas.Visible := true;
+     //so manutencao
+     btnManutencao.Enabled :=
+      (dmDB.vRevisaoMaquinas=1);
+     //So abastecimento
+     btnAbastecimento.Enabled :=
+      (dmDB.vAbastecimento=1);
+    end
+    else
+     layMaquinas.Visible := false;
+    if dmDB.vArmazem=1 then
+     layArmazem.Visible := true
+    else
+     layArmazem.Visible := false;
+    //pulverizacao
+    if dmDB.vPulverizacao=1 then
+     layPul.Visible := true
+    else
+     layPul.Visible := false;
+
+    //pluviometria
+    if dmDB.vpluviometria=1 then
+     layStandPluviometria.Visible :=true
+    else
+     layStandPluviometria.Visible :=false;
+
+   // plantio ou aplicacao de solido
+    if(dmDB.vAplicacaoSolido=1) or
+      (dmDB.vplantio=1) then
+    begin
+     layPlantioAplicacao.Visible := true;
+     btnPlantio.Enabled := dmDB.vaplicacaosolido=1;
+     btnAplicacaoSolido.Enabled  := dmDB.vplantio=1;
+    end
+    else
+     layPlantioAplicacao.Visible := false;
+    if(dmDB.vMonitoramentopragas=1) or
+      (dmDB.vplantio=1) then
+    begin
+     layColheitaMonitoramento.Visible := true;
+     btnColheita.Enabled       := dmDB.vColheita=1;
+     btnMonitoramento.Enabled  := dmDB.vMonitoramentopragas=1;
+    end
+    else
+     layColheitaMonitoramento.Visible := false;
+  end
+  else
+  begin
+    layMaquinas.Visible              := true;
+    layArmazem.Visible               := false;
+    layPul.Visible                   := false;
+    layStandPluviometria.Visible     := false;
+    layPlantioAplicacao.Visible      := false;
+    layColheitaMonitoramento.Visible := false;
+    layExtra.Visible                 := false;
+  end;
 end;
 
 procedure TfrmPrincipal.MudarAba(ATabItem: TTabItem; sender: TObject);

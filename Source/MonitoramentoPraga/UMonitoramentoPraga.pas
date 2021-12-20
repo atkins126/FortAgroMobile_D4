@@ -510,29 +510,28 @@ begin
    btnExcluiItem.Visible := false;
  end;
 end;
-{$IFDEF ANDROID}
+
 procedure TfrmMonitoramento.btnLerQrClick(Sender: TObject);
 var
  vCodigo :string;
 begin
-  FrmCamera:= TFrmCamera.Create(nil);
+  if Not Assigned(FrmCamera) then
+   Application.CreateForm(TFrmCamera, FrmCamera);
+  FrmCamera.CodeReader1.Start;
   FrmCamera.ShowModal(procedure(ModalResult: TModalResult)
   begin
-    if ModalResult = 0 then
-    begin
-     vCodigo        := FrmCamera.codigo;
-     vIdTalhao      := dmFunctions.RetornaIdTalhao(vCodigo);
-     edtTalhao.Text := vCodigo;
-     if (vIdTalhao.Length=0) then
-     begin
-       ShowMessage('Talhão Não Encontrado');
-       edtTalhao.Text :='';
-       Exit;
-     end;
-    end
+   vCodigo        := FrmCamera.codigo;
+   vIdTalhao      := dmFunctions.RetornaIdTalhao(vCodigo);
+   edtTalhao.Text := vCodigo;
+   if (vIdTalhao.Length=0) then
+   begin
+     ShowMessage('Talhão Não Encontrado');
+     edtTalhao.Text :='';
+     Exit;
+   end;
   end);
 end;
-{$ENDIF}
+
 procedure TfrmMonitoramento.btnNovaPragaClick(Sender: TObject);
 begin
  RecPrincipalPragas.Enabled  :=false;
@@ -618,17 +617,13 @@ end;
  {$ENDIF}
 procedure TfrmMonitoramento.EditButton1Click(Sender: TObject);
 begin
-  frmPragas := TfrmPragas.Create(Self);
-  try
-    frmPragas.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      edtPraga.Text    := dmDB.vNomePraga;
-      vIdPraga         := dmDB.vIdPraga;
-    end);
-  finally
-    frmPragas.free;
-  end;
+  if Not Assigned(frmPragas) then
+   Application.CreateForm(TfrmPragas,frmPragas);
+  frmPragas.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    edtPraga.Text    := dmDB.vNomePraga;
+    vIdPraga         := dmDB.vIdPraga;
+  end);
 end;
 
 procedure TfrmMonitoramento.edtDataFChange(Sender: TObject);

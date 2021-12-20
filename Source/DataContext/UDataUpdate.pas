@@ -36,12 +36,42 @@ procedure TdmUpdate.CreateTablesVersao(NumeroVersao: string);
 var
  vQryAux:TFDQuery;
 begin
+ vQryAux:=TFDQuery.Create(nil);
+ vQryAux.Connection := dmDB.FDConn;
+
+ if not VerificaCampoExiste('pulverizacao','operadormaquinas') then
+ begin
+  with vQryAux,vQryAux.SQL do
+  begin
+   Clear;
+   Add('ALTER TABLE operadormaquinas ADD pulverizacao integer NULL DEFAULT 0');
+   ExecSQL;
+  end;
+ end;
  if not VerificaCampoExiste('TIPODB','CONFIG') then
  begin
   with vQryAux,vQryAux.SQL do
   begin
    Clear;
    Add('ALTER TABLE CONFIG ADD TIPODB VARCHAR(11)');
+   ExecSQL;
+  end;
+ end;
+ if not VerificaCampoExiste('horimetromaquina','revisaomaquinahist') then
+ begin
+  with vQryAux,vQryAux.SQL do
+  begin
+   Clear;
+   Add('ALTER TABLE revisaomaquinahist ADD horimetromaquina numeric(15,2)');
+   ExecSQL;
+  end;
+ end;
+ if not VerificaCampoExiste('planonome','revisaomaquinahist') then
+ begin
+  with vQryAux,vQryAux.SQL do
+  begin
+   Clear;
+   Add('ALTER TABLE revisaomaquinahist ADD planonome VARCHAR(100)');
    ExecSQL;
   end;
  end;

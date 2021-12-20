@@ -343,17 +343,13 @@ end;
 
 procedure TfrmPluviometria.edtPluviometroClick(Sender: TObject);
 begin
- frmPluviometro := TfrmPluviometro.Create(Self);
-  try
-    frmPluviometro.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      edtPluviometro.Text := dmDB.vNomePluvSel;
-      vIdPluviometro      := dmDB.vIdPluviometroSel;
-    end);
-  finally
-    frmPluviometro.free;
-  end;
+  if Not Assigned(frmPluviometro) then
+   Application.CreateForm(TfrmPluviometro,frmPluviometro);
+  frmPluviometro.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    edtPluviometro.Text := dmDB.vNomePluvSel;
+    vIdPluviometro      := dmDB.vIdPluviometroSel;
+  end);
 end;
 
 procedure TfrmPluviometria.FormShow(Sender: TObject);

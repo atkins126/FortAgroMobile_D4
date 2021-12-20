@@ -121,17 +121,13 @@ uses UPrincipal, UDataContext, UTalhoes;
 
 procedure TfrmStandPlantas.BtnAddTalhaoClick(Sender: TObject);
 begin
-  frmTalhoes := TfrmTalhoes.Create(Self);
-  try
-    frmTalhoes.ShowModal(
-    procedure(ModalResult: TModalResult)
-    begin
-      edtAddTalhao.Text := dmDB.vNomeTalhao;
-      vIdTalhao         := dmDB.vIdTalhao;
-    end);
-  finally
-    frmTalhoes.free;
-  end;
+  if Not Assigned(frmTalhoes) then
+   Application.CreateForm(TfrmTalhoes,frmTalhoes);
+  frmTalhoes.ShowModal(procedure(ModalResult: TModalResult)
+  begin
+    edtAddTalhao.Text := dmDB.vNomeTalhao;
+    vIdTalhao         := dmDB.vIdTalhao;
+  end);
 end;
 
 procedure TfrmStandPlantas.btnBuscarOperacaoClick(Sender: TObject);

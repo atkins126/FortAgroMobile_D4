@@ -4,9 +4,50 @@
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
     <PropertyGroup>
-        <DeviceId Condition="'$(Platform)'=='Android'">d3e54f2e8dac</DeviceId>
+        <DeviceId Condition="'$(Platform)'=='Android'">906b649b</DeviceId>
         <DeviceId Condition="'$(Platform)'=='Android64'"/>
+        <DeviceId Condition="'$(Platform)'=='iOSDevice64'"/>
+        <DeviceId Condition="'$(Platform)'=='iOSSimulator'">iPhone</DeviceId>
     </PropertyGroup>
+    <ItemGroup Condition="'$(Platform)'=='iOSDevice64'"/>
+    <ItemGroup Condition="'$(Platform)'=='Win64'">
+        <DeployFile Include="$(BDS)\bin64\dbxadapter.dll" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FortMobile\</RemoteDir>
+            <RemoteName>dbxadapter.dll</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin64\midas.dll" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FortMobile\</RemoteDir>
+            <RemoteName>midas.dll</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin64\dbxadapter.dll" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FortMobile\</RemoteDir>
+            <RemoteName>dbxadapter.dll</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\bin64\midas.dll" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FortMobile\</RemoteDir>
+            <RemoteName>midas.dll</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+    </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='Win32'">
         <DeployFile Include="FortMobile.exe" Condition="'$(Config)'=='Debug'">
             <RemoteDir>FortMobile\</RemoteDir>
@@ -64,37 +105,55 @@
             <Overwrite>True</Overwrite>
         </DeployFile>
     </ItemGroup>
-    <ItemGroup Condition="'$(Platform)'=='Win64'">
-        <DeployFile Include="$(BDS)\bin64\dbxadapter.dll" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>FortMobile\</RemoteDir>
-            <RemoteName>dbxadapter.dll</RemoteName>
+    <ItemGroup Condition="'$(Platform)'=='OSX64'">
+        <DeployFile Include="$(BDS)\redist\osx64\libsqladapter.dylib" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FortMobile.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libsqladapter.dylib</RemoteName>
             <DeployClass>File</DeployClass>
             <Operation>0</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="$(BDS)\bin64\midas.dll" Condition="'$(Config)'=='Release'">
-            <RemoteDir>FortMobile\</RemoteDir>
-            <RemoteName>midas.dll</RemoteName>
+        <DeployFile Include="$(BDS)\Redist\osx64\libcgsqlite3.dylib" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FortMobile.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libcgsqlite3.dylib</RemoteName>
             <DeployClass>File</DeployClass>
             <Operation>0</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="$(BDS)\bin64\dbxadapter.dll" Condition="'$(Config)'=='Release'">
-            <RemoteDir>FortMobile\</RemoteDir>
-            <RemoteName>dbxadapter.dll</RemoteName>
+        <DeployFile Include="$(BDS)\redist\osx64\libsqladapter.dylib" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FortMobile.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libsqladapter.dylib</RemoteName>
             <DeployClass>File</DeployClass>
             <Operation>0</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="$(BDS)\bin64\midas.dll" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>FortMobile\</RemoteDir>
-            <RemoteName>midas.dll</RemoteName>
+        <DeployFile Include="$(BDS)\redist\osx64\libmidas.dylib" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FortMobile.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libmidas.dylib</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\redist\osx64\libmidas.dylib" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FortMobile.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libmidas.dylib</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\Redist\osx64\libcgsqlite3.dylib" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FortMobile.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>libcgsqlite3.dylib</RemoteName>
             <DeployClass>File</DeployClass>
             <Operation>0</Operation>
             <LocalCommand/>
@@ -325,6 +384,62 @@
             <RemoteName>splash_image.png</RemoteName>
             <DeployClass>Android_SplashImage470</DeployClass>
             <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='iOSSimulator'">
+        <DeployFile Include="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib">
+            <RemoteDir>FortMobile.app\</RemoteDir>
+            <RemoteName>libcgunwind.1.0.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\redist\iossimulator\libmidas.dylib" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FortMobile.app\</RemoteDir>
+            <RemoteName>libmidas.dylib</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\Redist\iossimulator\libpcre.dylib">
+            <RemoteDir>FortMobile.app\</RemoteDir>
+            <RemoteName>libpcre.dylib</RemoteName>
+            <DeployClass>DependencyModule</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\redist\iossimulator\libmidas.dylib" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FortMobile.app\</RemoteDir>
+            <RemoteName>libmidas.dylib</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\redist\osx32\libsqladapter.dylib" Condition="'$(Config)'=='Release'">
+            <RemoteDir>FortMobile.app\</RemoteDir>
+            <RemoteName>libsqladapter.dylib</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="$(BDS)\redist\osx32\libsqladapter.dylib" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FortMobile.app\</RemoteDir>
+            <RemoteName>libsqladapter.dylib</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>

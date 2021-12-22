@@ -325,7 +325,6 @@ type
     Layout8: TLayout;
     Rectangle29: TRectangle;
     Label42: TLabel;
-    VertScrollBox1: TVertScrollBox;
     btnFotoBomba: TRectangle;
     Image18: TImage;
     Label40: TLabel;
@@ -350,6 +349,7 @@ type
     btnFechaImg: TRectangle;
     Image22: TImage;
     Label47: TLabel;
+    HorzScrollBox1: THorzScrollBox;
     procedure btnBuscarMaquinaClick(Sender: TObject);
     procedure EditButton1Click(Sender: TObject);
     procedure EditButton2Click(Sender: TObject);
@@ -464,9 +464,10 @@ type
     vIdAbastecimento,vIdProduto,vIdItemOutros,vILocalOrigem,vIdLocalDestino,
     vIdTransferencia,vIdAtividade,vCodigo,
     vImg64Horimetro,
-    vImg64Bomba :string;
+    vImg64Bomba,vImg64HorimetroBD,vImg64BombaBD :string;
     function BitmapFromBase64(const base64: string): TBitmap;
     function Base64FromBitmap(Bitmap: TBitmap): string;
+    function Base64FromBitmapRedimenssionada(Bitmap: TBitmap): string;
   end;
 
 var
@@ -494,6 +495,33 @@ var
   Output: TStringStream;
 begin
   Input := TBytesStream.Create;
+  Bitmap.SaveToStream(Input);
+  Input.Position := 0;
+  try
+    Bitmap.SaveToStream(Input);
+    Input.Position := 0;
+    Output := TStringStream.Create('', TEncoding.ASCII);
+    try
+      Soap.EncdDecd.EncodeStream(Input, Output);
+      Result := Output.DataString;
+    finally
+      Output.Free;
+    end;
+  finally
+    Input.Free;
+  end;
+end;
+
+function TfrmAbastecimento.Base64FromBitmapRedimenssionada(
+  Bitmap: TBitmap): string;
+var
+  Input: TBytesStream;
+  Output: TStringStream;
+begin
+  Input := TBytesStream.Create;
+  Bitmap.Resize(300,300);
+  Bitmap.SaveToStream(Input);
+  Input.Position := 0;
   try
     Bitmap.SaveToStream(Input);
     Input.Position := 0;
@@ -963,6 +991,8 @@ begin
        dmdb.TAbastecimentoobs.AsString                      := edtObs.Text;
       dmdb.TAbastecimentoimg.AsString                       := vImg64Horimetro;
       dmdb.TAbastecimentoimg2.AsString                      := vImg64Bomba;
+      dmdb.TAbastecimentoimg3.AsString                      := vImg64HorimetroBD;
+      dmdb.TAbastecimentoimg4.AsString                      := vImg64BombaBD;
       try
        dmdb.TAbastecimento.ApplyUpdates(-1);
        ShowMessage('Abastecimento Adicionada com sucesso!!');
@@ -1181,9 +1211,15 @@ end;
 procedure TfrmAbastecimento.Rectangle30Click(Sender: TObject);
 begin
  if not imgHorimetro.Bitmap.IsEmpty then
-    vImg64Horimetro := Base64FromBitmap(imgHorimetro.Bitmap);
+ begin
+    vImg64Horimetro   := Base64FromBitmap(imgHorimetro.Bitmap);
+    vImg64HorimetroBD := Base64FromBitmapRedimenssionada(imgHorimetro.Bitmap);
+ end;
  if not imgBomba.Bitmap.IsEmpty then
-    vImg64Bomba := Base64FromBitmap(imgBomba.Bitmap);
+ begin
+   vImg64Bomba   := Base64FromBitmap(imgBomba.Bitmap);
+   vImg64BombaBD := Base64FromBitmapRedimenssionada(imgBomba.Bitmap);
+ end;
  if vAbreImg=0 then
   MudarAba(tbiCad,sender);
  if vAbreImg=1 then
@@ -1373,8 +1409,10 @@ end;
 
 procedure TfrmAbastecimento.FormShow(Sender: TObject);
 begin
- vImg64Bomba     :='';
- vImg64Horimetro :='';
+ vImg64Bomba       :='';
+ vImg64Horimetro   :='';
+ vImg64BombaBD     :='';
+ vImg64HorimetroBD :='';
  tRecImagem.Visible := false;
  btnImg.Visible          := true;
  permissao               := T99Permissions.Create;
@@ -1387,6 +1425,8 @@ begin
  btnExcluiItem.Visible   := false;
  tbPrincipal.TabPosition := TTabPosition.None;
  tbPrincipal.ActiveTab   := tbiLista;
+ RecImgBomba.Width       := frmAbastecimento.Width -40;
+ RecImgHrimetro.Width    := frmAbastecimento.Width -40;
  GeraLista('');
 end;
 
@@ -1488,6 +1528,12 @@ begin
 
        img := TListItemImage(Objects.FindDrawable('Image21'));
        img.Bitmap     := frmPrincipal.imgFotos.Bitmap;
+
+       txt      := TListItemText(Objects.FindDrawable('Text24'));
+       txt.Text := 'Horímetro: ';
+
+       txt      := TListItemText(Objects.FindDrawable('Text23'));
+       txt.Text := dmDB.TAbastecimentohorimetro.AsString;
 
      end;
      dmDB.TAbastecimento.Next;

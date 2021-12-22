@@ -1250,7 +1250,18 @@ object dmSync: TdmSync
     Connection = dmDB.FDConn
     SQL.Strings = (
       'select '
-      ' *'
+      
+        '  id,status,datareg,idusuario,dataalteracao,idusuarioalteracao,i' +
+        'dlocalestoque,idmaquina,idoperador,'#9
+      
+        '  volumelt,combustivel,dataabastecimento,hora,syncaws,syncfaz,ho' +
+        'rimetro,idatividade,obs,'
+      '  img3 img,'
+      '  img4 img2,'
+      '  '#39#39' img3,'
+      '  '#39#39' img4,'
+      '  '#39#39' img5,'
+      '  externo'
       'from abastecimento a'
       'where syncFaz=0')
     Left = 656
@@ -1259,20 +1270,24 @@ object dmSync: TdmSync
       FieldName = 'id'
       Origin = 'id'
       ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
     end
     object TSyncAbastecimentostatus: TWideStringField
       FieldName = 'status'
       Origin = 'status'
+      Required = True
       Size = 32767
     end
     object TSyncAbastecimentodatareg: TWideStringField
       FieldName = 'datareg'
       Origin = 'datareg'
+      Required = True
       Size = 32767
     end
     object TSyncAbastecimentoidusuario: TWideStringField
       FieldName = 'idusuario'
       Origin = 'idusuario'
+      Required = True
       Size = 32767
     end
     object TSyncAbastecimentodataalteracao: TWideStringField
@@ -1288,16 +1303,19 @@ object dmSync: TdmSync
     object TSyncAbastecimentoidlocalestoque: TWideStringField
       FieldName = 'idlocalestoque'
       Origin = 'idlocalestoque'
+      Required = True
       Size = 32767
     end
     object TSyncAbastecimentoidmaquina: TWideStringField
       FieldName = 'idmaquina'
       Origin = 'idmaquina'
+      Required = True
       Size = 32767
     end
     object TSyncAbastecimentoidoperador: TWideStringField
       FieldName = 'idoperador'
       Origin = 'idoperador'
+      Required = True
       Size = 32767
     end
     object TSyncAbastecimentovolumelt: TBCDField
@@ -1309,23 +1327,28 @@ object dmSync: TdmSync
     object TSyncAbastecimentocombustivel: TIntegerField
       FieldName = 'combustivel'
       Origin = 'combustivel'
+      Required = True
     end
     object TSyncAbastecimentodataabastecimento: TDateField
       FieldName = 'dataabastecimento'
       Origin = 'dataabastecimento'
+      Required = True
     end
     object TSyncAbastecimentohora: TTimeField
       FieldName = 'hora'
       Origin = 'hora'
+      Required = True
     end
     object TSyncAbastecimentosyncaws: TWideStringField
       FieldName = 'syncaws'
       Origin = 'syncaws'
+      Required = True
       Size = 32767
     end
     object TSyncAbastecimentosyncfaz: TWideStringField
       FieldName = 'syncfaz'
       Origin = 'syncfaz'
+      Required = True
       Size = 32767
     end
     object TSyncAbastecimentohorimetro: TBCDField
@@ -1345,28 +1368,37 @@ object dmSync: TdmSync
     end
     object TSyncAbastecimentoimg: TWideMemoField
       FieldName = 'img'
-      Origin = 'img'
+      Origin = 'img3'
       BlobType = ftWideMemo
     end
     object TSyncAbastecimentoimg2: TWideMemoField
       FieldName = 'img2'
-      Origin = 'img2'
-      BlobType = ftWideMemo
-    end
-    object TSyncAbastecimentoimg3: TWideMemoField
-      FieldName = 'img3'
-      Origin = 'img3'
-      BlobType = ftWideMemo
-    end
-    object TSyncAbastecimentoimg4: TWideMemoField
-      FieldName = 'img4'
       Origin = 'img4'
       BlobType = ftWideMemo
     end
-    object TSyncAbastecimentoimg5: TWideMemoField
+    object TSyncAbastecimentoimg3: TWideStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'img3'
+      Origin = 'img3'
+      ProviderFlags = []
+      ReadOnly = True
+      Size = 32767
+    end
+    object TSyncAbastecimentoimg4: TWideStringField
+      AutoGenerateValue = arDefault
+      FieldName = 'img4'
+      Origin = 'img4'
+      ProviderFlags = []
+      ReadOnly = True
+      Size = 32767
+    end
+    object TSyncAbastecimentoimg5: TWideStringField
+      AutoGenerateValue = arDefault
       FieldName = 'img5'
       Origin = 'img5'
-      BlobType = ftWideMemo
+      ProviderFlags = []
+      ReadOnly = True
+      Size = 32767
     end
     object TSyncAbastecimentoexterno: TWideStringField
       FieldName = 'externo'

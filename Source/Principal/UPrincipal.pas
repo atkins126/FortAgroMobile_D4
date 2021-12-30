@@ -380,6 +380,7 @@ type
     procedure btnColheitaClick(Sender: TObject);
     procedure bntAtividadeExtraClick(Sender: TObject);
     procedure btnDesembarqueClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     procedure MudarAba(ATabItem: TTabItem; sender: TObject);
   public
@@ -1063,7 +1064,7 @@ begin
          case AResult of
           mrYES:
           begin
-           Application.Terminate;
+           Close;
           end;
          end;
         end);
@@ -1372,6 +1373,12 @@ begin
 //     {$ENDIF}
 end;
 
+procedure TfrmPrincipal.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+   CanClose := True;
+   SharedActivity.finish
+end;
+
 procedure TfrmPrincipal.FormCreate(Sender: TObject);
 begin
 end;
@@ -1442,7 +1449,7 @@ end;
 
 function TfrmPrincipal.GetVersaoArq: string;
 begin
-  Result := 'v2021-12-05';
+  Result := 'v2021-12-06';
 end;
 
 procedure TfrmPrincipal.Image16Click(Sender: TObject);

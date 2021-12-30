@@ -2532,6 +2532,7 @@ begin
    Add(' end StatusStr');
    Add('from revisaomaquinahist a');
    Add('where a.idmaquina='+vIdMaquina);
+   Add('ORDER BY horimetroproxima');
    Open;
  end;
 end;

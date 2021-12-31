@@ -1027,6 +1027,7 @@ begin
    Add('join operadormaquinas d on d.id=a.idOperador');
    Add('join auxatividadeabastecimento h on h.id=a.idAtividade');
    Add(vFiltro);
+   Add('order by datareg desc');
    Open;
  end;
 end;
@@ -2531,6 +2532,7 @@ begin
    Add(' end StatusStr');
    Add('from revisaomaquinahist a');
    Add('where a.idmaquina='+vIdMaquina);
+   Add('ORDER BY horimetroproxima');
    Open;
  end;
 end;
